@@ -1,7 +1,10 @@
 package com.dyingtofall.helpmeupx;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,13 +25,28 @@ public class MainActivity extends AppCompatActivity
         sendBtn = (Button) findViewById(R.id.button1);
         msms = new SMS();
         sendBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                msms.sendSMSMessage();
+            public void onClick(View view)
+            {
+                sendSMSMessage();
+                //msms.sendSMSMessage();    //potential use for when using SMS class
+
             }
         });
        // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
+
+    }
+
+    protected void sendSMSMessage()  //needs to be moevd back to SMS class
+    {
+        phoneNo = "15413908735";
+        message = "Help I have fallen and can't get up";
+
+        PendingIntent pi = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), 0);   // needs to be changed back to SMS class when moved
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNo, null, message, pi, null);
 
     }
 

@@ -1,11 +1,6 @@
 package com.dyingtofall.helpmeupx;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.os.Bundle;
 import android.app.Activity;
-import android.telephony.SmsManager;
-import android.view.View;
 import android.widget.Button;
 
 
@@ -16,7 +11,8 @@ public class SMS extends Activity
     String message;
 
 
-    @Override
+
+   /* @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -30,7 +26,8 @@ public class SMS extends Activity
         });
     }
 
-    protected void sendSMSMessage()
+
+    protected void sendSMSMessage()  //commented out to test in MainActivity
     {
         phoneNo = "15413908735";
         message = "Help I have fallen and can't get up";
@@ -41,4 +38,5 @@ public class SMS extends Activity
         sms.sendTextMessage(phoneNo, null, message, pi, null);
 
     }
+*/
 }

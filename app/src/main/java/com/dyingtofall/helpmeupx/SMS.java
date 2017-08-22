@@ -13,13 +13,13 @@ public class SMS extends Activity
     //Button sendBtn;
     String phoneNo;
     String message;
-    public MainActivity mainActivity;
+    public MainActivityFragment mainActivityFragment;
     private Context context;
 
-    public SMS(MainActivity mainActivity)
+    public SMS(MainActivityFragment mainActivityFragment)
     {
         super();
-        this.mainActivity = mainActivity;
+        this.mainActivityFragment = mainActivityFragment;
     }
 
 
@@ -44,7 +44,7 @@ public class SMS extends Activity
         //phoneNo = "15413908735";
         phoneNo = "16199525946";
         message = "Help I have fallen and can't get up";
-        PendingIntent pi = PendingIntent.getActivity(mainActivity, 0, new Intent(this, SMS.class), 0);   // needs to be changed back to SMS class when moved
+        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, SMS.class), 0);   // needs to be changed back to SMS class when moved
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNo, null, message, pi, null);
 

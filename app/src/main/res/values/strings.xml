@@ -2,4 +2,7 @@
     <string name="app_name">HelpMeUp</string>
     <string name="action_settings">Settings</string>
     <string name="cancel_button">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="permision_available_bluetooth">Bluetooth Permission has been granted. Preview can now be opened.</string>
+    <string name="permission_bluetooth_rationale">Bluetooth permission is needed to show the bluetooth preview.</string>
 </resources>

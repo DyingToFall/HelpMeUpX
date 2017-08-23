@@ -67,7 +67,7 @@ public class BluetoothRfCommFrag extends DialogFragment
 
                     ConnectedThread connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
                     Toast.makeText(getActivity(),"Connect",Toast.LENGTH_LONG).show();
-
+                    connectedThread.start();
                     String s= "Succesfully connected";
                     connectedThread.write(s.getBytes());
                     Log.i(tag, "connected");

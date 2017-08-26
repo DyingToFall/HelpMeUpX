@@ -32,6 +32,8 @@ import java.util.UUID;
 
 import static android.app.Activity.RESULT_CANCELED;
 
+
+
 public class BluetoothRfCommFrag extends DialogFragment
 {
     private final String TAG = "Debugging";
@@ -41,7 +43,8 @@ public class BluetoothRfCommFrag extends DialogFragment
     public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     BluetoothAdapter btAdapter;
-    ConnectThread connectThread;
+    ClientConnectThread clientConnectThread;
+    ServerConnectedThread serverConnectedThread;
     ArrayList<String> arrayListpaired;
     ArrayAdapter<String> listAdapter,adapter;
     ListView listView,listViewPaired;
@@ -54,22 +57,24 @@ public class BluetoothRfCommFrag extends DialogFragment
     ArrayList<BluetoothDevice> arrayListPairedBluetoothDevices;
     ListItemClicked listItemClicked;
     ListItemClickedonPaired listItemClickedonPaired;
-    Button button1, button2, button3, button4, button5;
+    Button button1, button2, button3, button4;
     String tag = "debugging";
 
     private final Handler mHandler= new Handler()
     {
 
-        public void handleMessage(Message msg){
+        public void handleMessage(Message msg)
+        {
             super.handleMessage(msg);
             switch(msg.what){
                 case SUCCESS_CONNECT:
 
-                    ConnectedThread connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
+                    serverConnectedThread = new ServerConnectedThread((BluetoothSocket)msg.obj);
+                    //ClientConnectThread connectThread = new ClientConnectThread(BluetoothDevice device, BluetoothAdapter blueAdapter, UUID uuid);
                     Toast.makeText(getActivity(),"Connect",Toast.LENGTH_LONG).show();
-                    connectedThread.start();
+                    serverConnectedThread.start();
                     String s= "Succesfully connected";
-                    connectedThread.write(s.getBytes());
+                    serverConnectedThread.write(s.getBytes());
                     Log.i(tag, "connected");
                     break;
 
@@ -190,6 +195,8 @@ public class BluetoothRfCommFrag extends DialogFragment
 
         listView.setOnItemClickListener(listItemClicked);
         listViewPaired.setOnItemClickListener(listItemClickedonPaired);
+        final ClientConnectThread clientConnectThread;
+
 
         filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 
@@ -202,12 +209,13 @@ public class BluetoothRfCommFrag extends DialogFragment
                 if (BluetoothDevice.ACTION_FOUND.equals(Action)) {
                     Toast.makeText(getActivity(), "One Device Found", Toast.LENGTH_SHORT).show();
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
+                    //blueAdapter = new BluetoothAdapter();
                     if (arrayListBluetoothDevices.size() < 1) // this checks if the size of bluetooth device is 0,then add the
                     {                                           // device to the arraylist.
                         listAdapter.add(device.getName() + "\n" + device.getAddress());
                         arrayListBluetoothDevices.add(device);
                         listAdapter.notifyDataSetChanged();
+                        //clientConnectThread = new ClientConnectThread();
                     }
 
                     else
@@ -222,6 +230,7 @@ public class BluetoothRfCommFrag extends DialogFragment
                             listAdapter.add(device.getName() + "\n" + device.getAddress());
                             arrayListBluetoothDevices.add(device);
                             listAdapter.notifyDataSetChanged();
+
                         }
                     }
 
@@ -277,29 +286,38 @@ public class BluetoothRfCommFrag extends DialogFragment
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // TODO Auto-generated method stub
             bdDevice = arrayListBluetoothDevices.get(position);
-
+            ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
             Log.i("Log", "The device : " + bdDevice.toString());
 
             getPairedDevices();
             createBond(bdDevice);
             adapter.notifyDataSetChanged();
 
+
             Log.i("Log", "The bond is created: with" + bdDevice.toString());
 
 
         }
+
+
     }
 
 
-    private  class ConnectThread extends Thread {
+    private class ClientConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
+        BluetoothAdapter bluetoothAdapter;
+        ServerConnectedThread serverConnectedThread;
+        UUID MY_UUID;
 
-        public ConnectThread(BluetoothDevice device) {
+
+        public ClientConnectThread(BluetoothDevice device, BluetoothAdapter blueAdapter, UUID uuid ) {
+            bluetoothAdapter = blueAdapter;
+            MY_UUID = uuid;
             BluetoothSocket tmp = null;
             mmDevice = device;
             try {
-                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+                tmp = device.createRfcommSocketToServiceRecord(uuid);
             } catch (IOException e) { }
             mmSocket = tmp;
         }
@@ -315,8 +333,21 @@ public class BluetoothRfCommFrag extends DialogFragment
                 return;
             }
 
-            //mHandler.obtainMessage(SUCCESS_CONNECT, mmSocket).sendToTarget();
+            mHandler.obtainMessage(SUCCESS_CONNECT, mmSocket).sendToTarget();
+            ManageConnectedSocket(mmSocket);
 
+        }
+
+        void ManageConnectedSocket(BluetoothSocket Socket)
+        {
+            serverConnectedThread = new ServerConnectedThread(Socket);
+            serverConnectedThread.start();
+
+        }
+
+        ServerConnectedThread GetConnectedThread()
+        {
+            return serverConnectedThread;
         }
 
 
@@ -329,12 +360,14 @@ public class BluetoothRfCommFrag extends DialogFragment
     }
 
 
-    private  class ConnectedThread extends Thread {
+
+    private  class ServerConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
+
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket) {
+        public ServerConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -355,10 +388,12 @@ public class BluetoothRfCommFrag extends DialogFragment
             int bytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
-            while (true) {
+            while (true)
+            {
+                buffer  = new byte[1024];
                 try {
                     // Read from the InputStream
-                    buffer  = new byte[1024];
+
                     bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI activity
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
@@ -398,11 +433,18 @@ public class BluetoothRfCommFrag extends DialogFragment
 
     class ListItemClickedonPaired implements AdapterView.OnItemClickListener
     {
+        //ServerConnectedThread serverConnectedThread;
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
             bdDevice = arrayListPairedBluetoothDevices.get(position);
+            ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
+            clientConnectThread.start();
+            //serverConnectedThread = new ServerConnectedThread((BluetoothSocket)msg.obj);
+            //clientConnectThread.ManageConnectedSocket(mmSocket);
+            //serverConnectedThread.run();
+            //mHandler.handleMessage();
 
-            unpairDevice(bdDevice);
+            //unpairDevice(bdDevice);
             //arrayListPairedBluetoothDevices.clear();
 
         }

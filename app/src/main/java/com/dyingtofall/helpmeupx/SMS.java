@@ -44,7 +44,9 @@ public class SMS extends Activity
         //phoneNo = "15413908735";
         phoneNo = "16199525946";
         message = "Help I have fallen and can't get up";
-        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, SMS.class), 0);   // needs to be changed back to SMS class when moved
+        //PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), SMS.class), 0);   // needs to be changed back to SMS class when moved
+        //PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(this, SMS.class), 0);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(getApplicationContext(), SMS.class), 0);
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNo, null, message, pi, null);
 

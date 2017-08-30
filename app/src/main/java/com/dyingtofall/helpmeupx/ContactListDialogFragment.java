@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,18 +21,18 @@ import java.util.ArrayList;
  * Created by James W on 8/15/2017.
  */
 
-public class ContactListDialogFragment extends DialogFragment implements View.OnClickListener {
+public class ContactListDialogFragment extends DialogFragment {
 
     //ArrayList<String> cArrayList;
     //ArrayAdapter<String> cAdapter;
 
 
     ListView contactList;
+    //LinearLayout linearLay;
     ArrayList<ContactListInfo> cLArrayList;
     ContactListAdapter cLAdapter;
     Cursor cursor;
-
-
+    TextView textView;
 
 
     @Override
@@ -126,8 +127,10 @@ public class ContactListDialogFragment extends DialogFragment implements View.On
         */
 
         cLArrayList = new ArrayList<ContactListInfo>();
-        cLAdapter = new ContactListAdapter(getContext(), R.layout.contact_list_row_layout, cLArrayList);
+        cLAdapter = new ContactListAdapter(getContext(), R.layout.list_item, cLArrayList);
         contactList = (ListView) clView.findViewById(R.id.listViewContactList);
+        textView = (TextView) clView.findViewById(R.id.contactInfo);
+
 
 
         /*
@@ -193,32 +196,39 @@ public class ContactListDialogFragment extends DialogFragment implements View.On
 
                 if (hasPhoneNumber > 0) {
 
-                    output.append("\n First Name:" + name);
                     tempContact.setContactName(name);
 
                     firstCount = true;
 
+                    String numList[];
+                    numList = new String[12];
 
                     //This is to read multiple phone numbers associated with the same contact
                     Cursor phoneCursor = contentResolver.query(PhoneCONTENT_URI, null, Phone_CONTACT_ID + " = ?", new String[]{contact_id}, null);
 
+                    hasPhoneNumber = 0;
 
                     while (phoneCursor.moveToNext()) {
                         phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(NUMBER));
-                        output.append("\n Phone number:" + phoneNumber);
+
 
                         if (!firstCount) {
                             tempContact = new ContactListInfo();
                             tempContact.setContactName(name);
-                            tempContact.setContactPhone(phoneNumber);
-                            cLArrayList.add(counter, tempContact);
+                            numList[hasPhoneNumber] = phoneNumber;
+                            hasPhoneNumber = hasPhoneNumber + 1;
+                           // cLArrayList.add(counter, tempContact);
                         } else {
                             firstCount = false;
-                            tempContact.setContactPhone(phoneNumber);
-                            cLArrayList.add(counter, tempContact);
+                            numList[hasPhoneNumber] = phoneNumber;
+                            hasPhoneNumber = hasPhoneNumber + 1;
+                           // cLArrayList.add(counter, tempContact);
                         }
 
                     }
+
+                    tempContact.setContactPhones(numList);
+                    cLArrayList.add(counter, tempContact);
 
                     phoneCursor.close();
 
@@ -242,8 +252,24 @@ public class ContactListDialogFragment extends DialogFragment implements View.On
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 // Mark this view row as selected.
                 view.setSelected(true);
-                view.setBackgroundColor(getResources().getColor(R.color.colorYellow));
+                view.setBackgroundColor(getResources().getColor(R.color.colorGreen));
                 Toast.makeText(getContext(), "item clicked : \n" + contactList.getPositionForView(view), Toast.LENGTH_SHORT).show();
+                Bundle args = new Bundle();
+
+                String currContName = cLArrayList.get(i).getContactName();
+                String currContInfo[];
+                currContInfo = cLArrayList.get(i).getContactPhones();
+
+                args.putInt("DialogPosition", i); //might not need this right now
+                args.putString("PhoneName", currContName);
+                args.putStringArray("PhoneNumbers", currContInfo);
+
+                //args.putParcelableArrayList("cArrayList", cLArrayList);
+                //args.putStringArrayList("cArraylist", cLArrayList);
+
+                PhonePickerDialogFragment pLD = new PhonePickerDialogFragment();
+                pLD.setArguments(args);
+                pLD.show(getFragmentManager(),"Phone Picker Dialog");
             }
         });
 
@@ -251,24 +277,7 @@ public class ContactListDialogFragment extends DialogFragment implements View.On
         return builder.create();
     }
 
-    @Override
-    public void onClick(View view) {
-        view.setSelected(true);
-        view.setBackgroundColor(getResources().getColor(R.color.colorYellow));
-        Toast.makeText(getContext(), "item clicked : \n" + contactList.getPositionForView(view), Toast.LENGTH_SHORT).show();
-    }
 
 
-    public void onStart() {
-        super.onStart();
-        contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // Mark this view row as selected.
-                view.setSelected(true);
-                view.setBackgroundColor(getResources().getColor(R.color.colorYellow));
-                Toast.makeText(getContext(), "item clicked : \n" + contactList.getPositionForView(view), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+
 }

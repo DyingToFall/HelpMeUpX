@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.SmsManager;
-import android.widget.Button;
 
 
 public class SMS extends Activity
@@ -21,6 +20,8 @@ public class SMS extends Activity
         super();
         this.mainActivityFragment = mainActivityFragment;
     }
+
+
 
 
 
@@ -41,6 +42,8 @@ public class SMS extends Activity
     //this.context = context;
     protected void sendSMSMessage()
     {
+        String incomingString;
+       // extras = getIntent().getExtras();
         //phoneNo = "15413908735";
         phoneNo = "16199525946";
         message = "Help I have fallen and can't get up";

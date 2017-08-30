@@ -4,17 +4,17 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/clTextView"
+        android:id="@+id/elTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:textColor="@android:color/black"
-        android:text="@string/contact_list_header"
+        android:text="@string/emergency_list_header"
         />
 
 
     <ListView
-        android:id="@+id/listViewContactList"
+        android:id="@+id/listViewEmergencyList"
         android:dividerHeight="1dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >

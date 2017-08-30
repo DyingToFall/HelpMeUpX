@@ -15,17 +15,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -33,17 +40,23 @@ import java.util.UUID;
 import static android.app.Activity.RESULT_CANCELED;
 
 
-
 public class BluetoothRfCommFrag extends DialogFragment
 {
     private final String TAG = "Debugging";
     private final static int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
     protected static final int SUCCESS_CONNECT = 0;
+    private ArrayAdapter<String> chatArrayAdapter;
+    private StringBuffer outStringBuffer;
+    private EditText etMain;
     protected static final int MESSAGE_READ = 1;
+    public static final int MESSAGE_WRITE = 2;
+    public static final int STATE_CONNECTED = 3;
     public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     BluetoothAdapter btAdapter;
+    BluetoothRfCommFrag bluetoothRfCommFrag;
     ClientConnectThread clientConnectThread;
+
     ServerConnectedThread serverConnectedThread;
     ArrayList<String> arrayListpaired;
     ArrayAdapter<String> listAdapter,adapter;
@@ -53,11 +66,12 @@ public class BluetoothRfCommFrag extends DialogFragment
     IntentFilter filter;
     BroadcastReceiver receiver;
     BluetoothDevice bdDevice;
+
     ArrayList<BluetoothDevice> arrayListBluetoothDevices = null;
     ArrayList<BluetoothDevice> arrayListPairedBluetoothDevices;
     ListItemClicked listItemClicked;
     ListItemClickedonPaired listItemClickedonPaired;
-    Button button1, button2, button3, button4;
+    Button button1, button2, button3, button4, btnSend;
     String tag = "debugging";
 
     private final Handler mHandler= new Handler()
@@ -68,20 +82,46 @@ public class BluetoothRfCommFrag extends DialogFragment
             super.handleMessage(msg);
             switch(msg.what){
                 case SUCCESS_CONNECT:
-
+                    //Connected via RfComm
                     serverConnectedThread = new ServerConnectedThread((BluetoothSocket)msg.obj);
-                    //ClientConnectThread connectThread = new ClientConnectThread(BluetoothDevice device, BluetoothAdapter blueAdapter, UUID uuid);
                     Toast.makeText(getActivity(),"Connect",Toast.LENGTH_LONG).show();
                     serverConnectedThread.start();
-                    String s= "Succesfully connected";
-                    serverConnectedThread.write(s.getBytes());
                     Log.i(tag, "connected");
                     break;
 
                 case MESSAGE_READ:
+                    //Shows what messages are being received also decodes incoming text
                     byte[] readbuff=(byte[])msg.obj;
-                    String  string= readbuff.toString();
-                    Toast.makeText(getActivity(), string,Toast.LENGTH_SHORT).show();
+                    Charset usaScii = null;
+                    usaScii = Charset.forName("US-ASCII");
+                    ByteBuffer bb = ByteBuffer.wrap(readbuff);
+                    CharBuffer TempCharBuffer = usaScii.decode(bb);
+                    String string = TempCharBuffer.toString();
+                    if(string.equals("fall"))
+                    {
+                        Toast.makeText(getActivity(), "Help I have fallen",Toast.LENGTH_SHORT).show();
+                        Intent fallIntent = new Intent(getActivity().getApplication(), SMS.class);
+                        String fallString = null;
+                        fallIntent.putExtra("fall", fallString);
+                        startActivity(fallIntent);
+                    }
+                    else if (string.equals("panic"))
+                    {
+                        Toast.makeText(getActivity(), "Oh shit I need help",Toast.LENGTH_SHORT).show();
+                        Intent panicIntent = new Intent(getActivity().getApplication(), SMS.class);
+                        String panicString = null;
+                        panicIntent.putExtra("panic", panicString);
+                    }
+                    else
+                        Toast.makeText(getActivity(), string,Toast.LENGTH_SHORT).show();
+                    break;
+
+                case MESSAGE_WRITE:
+                    //Used to send messaages once connected
+                    byte[] writeBuf = (byte[])msg.obj;
+                    String writeMessage = writeBuf.toString();
+                    serverConnectedThread.write(writeMessage.getBytes());
+                    Log.i(tag, "message sent");
                     break;
 
             }
@@ -99,6 +139,7 @@ public class BluetoothRfCommFrag extends DialogFragment
         View bluetoothView = getActivity().getLayoutInflater().inflate(R.layout.rfcomm_main, null);
         builder.setView(bluetoothView);
         builder.setTitle("BlueTooth Options");
+
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -119,6 +160,10 @@ public class BluetoothRfCommFrag extends DialogFragment
         button2 = (Button) bluetoothView.findViewById(R.id.button2);
         button3 = (Button) bluetoothView.findViewById(R.id.button3);
         button4 = (Button) bluetoothView.findViewById(R.id.button4);
+        btnSend = (Button) bluetoothView.findViewById(R.id.btnSend);
+        etMain = (EditText) bluetoothView.findViewById(R.id.etMain);
+
+
 
 
         //This button turns on bluetooth
@@ -129,6 +174,15 @@ public class BluetoothRfCommFrag extends DialogFragment
             {
                 btAdapter.enable();
 
+            }
+        });
+
+        etMain.setOnEditorActionListener(mWriteListener);
+
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String message = etMain.getText().toString();
+                sendMessage(message);
             }
         });
 
@@ -191,6 +245,40 @@ public class BluetoothRfCommFrag extends DialogFragment
 
     }
 
+
+   //For in app messaging over bluetooth
+    private void sendMessage (String message)
+    {
+
+        outStringBuffer = new StringBuffer("");
+        if(message.length() > 0)
+        {
+            byte[] send = message.getBytes();
+
+            ServerConnectedThread r;
+            r = serverConnectedThread;
+            r.write(send);
+            outStringBuffer.setLength(0);
+            etMain.setText(outStringBuffer);
+
+        }
+    }
+
+    //For in app messaging over bluetooth
+    private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
+        public boolean onEditorAction(TextView view, int actionId,
+                                      KeyEvent event) {
+            if (actionId == EditorInfo.IME_NULL
+                    && event.getAction() == KeyEvent.ACTION_UP) {
+                String message = view.getText().toString();
+                sendMessage(message);
+            }
+            return true;
+        }
+    };
+
+
+
     private void init() {
 
         listView.setOnItemClickListener(listItemClicked);
@@ -209,13 +297,13 @@ public class BluetoothRfCommFrag extends DialogFragment
                 if (BluetoothDevice.ACTION_FOUND.equals(Action)) {
                     Toast.makeText(getActivity(), "One Device Found", Toast.LENGTH_SHORT).show();
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    //blueAdapter = new BluetoothAdapter();
+
                     if (arrayListBluetoothDevices.size() < 1) // this checks if the size of bluetooth device is 0,then add the
                     {                                           // device to the arraylist.
                         listAdapter.add(device.getName() + "\n" + device.getAddress());
                         arrayListBluetoothDevices.add(device);
                         listAdapter.notifyDataSetChanged();
-                        //clientConnectThread = new ClientConnectThread();
+
                     }
 
                     else
@@ -398,7 +486,9 @@ public class BluetoothRfCommFrag extends DialogFragment
                     // Send the obtained bytes to the UI activity
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
-                } catch (IOException e) {
+                } catch (IOException e)
+                {
+
                     break;
                 }
             }
@@ -408,6 +498,7 @@ public class BluetoothRfCommFrag extends DialogFragment
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
+                mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, bytes).sendToTarget();
             } catch (IOException e) { }
         }
 
@@ -433,20 +524,12 @@ public class BluetoothRfCommFrag extends DialogFragment
 
     class ListItemClickedonPaired implements AdapterView.OnItemClickListener
     {
-        //ServerConnectedThread serverConnectedThread;
+
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
             bdDevice = arrayListPairedBluetoothDevices.get(position);
             ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
             clientConnectThread.start();
-            //serverConnectedThread = new ServerConnectedThread((BluetoothSocket)msg.obj);
-            //clientConnectThread.ManageConnectedSocket(mmSocket);
-            //serverConnectedThread.run();
-            //mHandler.handleMessage();
-
-            //unpairDevice(bdDevice);
-            //arrayListPairedBluetoothDevices.clear();
-
         }
     }
 

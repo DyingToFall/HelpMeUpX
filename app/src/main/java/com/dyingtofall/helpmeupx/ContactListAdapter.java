@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,11 +17,13 @@ import java.util.ArrayList;
 public class ContactListAdapter extends ArrayAdapter<ContactListInfo> {
 
     ArrayList<ContactListInfo> cArrayList;
+    Context cons;
 
 
     public ContactListAdapter(@NonNull Context context, int textViewResourceId, ArrayList<ContactListInfo> objects) {
         super(context,textViewResourceId, objects);
         cArrayList = objects;
+        cons = context;
 
     }
 
@@ -49,20 +50,25 @@ public class ContactListAdapter extends ArrayAdapter<ContactListInfo> {
 
         View v = convertView;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        v = inflater.inflate(R.layout.contact_list_row_layout, null);
-        TextView listContact = (TextView) v.findViewById(R.id.listContactInfo);
-        CheckBox checkBox = (CheckBox) v.findViewById(R.id.listCheckBox);
-        String contactInformation;
+        v = inflater.inflate(R.layout.list_item, parent, false);
+        TextView listContact = (TextView) v.findViewById(R.id.contactInfo);
+        //String contactInformation;
+        String contactName;
 
         //might not need this since using arrayadapter not baseadapter
         //ContactListInfo cLInfo = (ContactListInfo) this.getItem(position);
 
+        /*
         contactInformation = cArrayList.get(position).getContactName() + "\n" +
                 cArrayList.get(position).getContactPhone();
 
         listContact.setText(contactInformation);
+        */
 
+        contactName = cArrayList.get(position).getContactName();
+        listContact.setText(contactName);
 
+        /*
         //checking if the checkbox is active or not and checking it if it is
         if (cArrayList.get(position).getContactBox() == true)
         {
@@ -73,9 +79,11 @@ public class ContactListAdapter extends ArrayAdapter<ContactListInfo> {
             checkBox.setChecked(false);
         }
 
+*/
         return v;
 
     }
+
 
 }
 

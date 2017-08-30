@@ -5,18 +5,17 @@ package com.dyingtofall.helpmeupx;
  */
 
 public class ContactListInfo {
+
     String contactName;
     String contactPhone;
-    String contactEmail; //might get rid of this later
-    boolean contactBox;
+    //String phoneTwo, phoneThree, phoneFour, phoneFive, phoneSix, phoneSeven, phoneEight;
+    String contactPhones[];
 
-    public ContactListInfo()
-    {
-        this.contactName = "";
+    ContactListInfo(){
+       this.contactName = "";
         this.contactPhone = "";
-        this.contactEmail = "";
-        this.contactBox = false;
-    }
+
+}
 
     public String getContactName()
     {
@@ -28,23 +27,56 @@ public class ContactListInfo {
         return contactPhone;
     }
 
-    public String getContactEmail()
+    public String[] getContactPhones()
     {
-        return contactEmail;
+        String cP[] = new String[12];
+        int i = 0;
+        while ((contactPhones[i] != null)&&(i < 12))
+        {
+            cP[i] = contactPhones[i];
+            i = i + 1;
+        }
+
+        return cP;
     }
 
-    public boolean getContactBox()
-    {
-        return contactBox;
-    }
+    /*
+    public String getPhoneTwo() { return phoneTwo; }
+
+    public String getPhoneThree() { return phoneThree; }
+
+    public String getPhoneFour() { return phoneFour; }
+
+    public String getPhoneFive() { return phoneFive; }
+
+    public String getPhoneSix() { return phoneSix; }
+
+    public String getPhoneSeven() { return phoneSeven; }
+
+    public String getPhoneEight() { return phoneEight; }
+    */
 
     public void setContactName(String cN) {contactName = cN; }
 
     public void setContactPhone(String cP) {contactPhone = cP; }
 
-    public void setContactEmail(String cE) {contactEmail = cE; }
+    /*
 
-    public void setContactBox (boolean cB) {contactBox = cB; }
+    public void setPhoneTwo(String pT) { phoneTwo = pT; }
 
+    public void setPhoneThree(String pTh) { phoneThree = pTh; }
+
+    public void setPhoneFour(String pF) { phoneFour = pF; }
+
+    public void setPhoneFive(String pFi) { phoneFive = pFi; }
+
+    public void setPhoneSix(String pS) { phoneSix = pS; }
+
+    public void setPhoneSeven(String pSe) { phoneSeven = pSe; }
+
+    public void setPhoneEight(String pE) { phoneEight = pE; }
+    */
+
+    public void setContactPhones(String[] cPs) {contactPhones = cPs;}
 
 }

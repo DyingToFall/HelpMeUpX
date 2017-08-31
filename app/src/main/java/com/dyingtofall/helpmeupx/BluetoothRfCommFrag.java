@@ -152,9 +152,9 @@ public class BluetoothRfCommFrag extends DialogFragment
 
         adapter= new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.bluetooth_list_row, arrayListpaired);
         listItemClickedonPaired = new ListItemClickedonPaired();
-        listViewPaired = (ListView) bluetoothView.findViewById(R.id.listView2);
+        listViewPaired = (ListView) bluetoothView.findViewById(R.id.listView3);
         listItemClicked = new ListItemClicked();
-        listView = (ListView) bluetoothView.findViewById(R.id.listView3);
+        listView = (ListView) bluetoothView.findViewById(R.id.listView2);
         listAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.bluetooth_list_item_single_choice);
         listView.setAdapter(listAdapter);
         listAdapter.notifyDataSetChanged();

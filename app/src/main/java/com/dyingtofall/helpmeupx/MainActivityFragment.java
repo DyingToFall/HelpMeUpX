@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -90,6 +91,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.Locale;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_CONTACTS;
 
 
 public class MainActivityFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback
@@ -97,6 +99,7 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
 {
     public static final String TAG1 = "MainActivity";
     private static final int REQUEST_BLUETOOTH = 0;
+    private Context context;
     Button sendBtn;
     Button contactBtn;
     protected SMS smsSend;
@@ -121,8 +124,8 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         //lblLocation = (TextView) view.findViewById(R.id.textView);
 
 
-        sendBtn = (Button) view.findViewById(R.id.SendText);
-        smsSend = new SMS(this);
+        /*sendBtn = (Button) view.findViewById(R.id.SendText);
+        smsSend = new SMS(this, context);
         sendBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 //SMS smsSend = new SMS();
@@ -133,7 +136,7 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
                 //msms.sendSMSMessage();    //potential use for when using SMS class
 
             }
-        });
+        });*/
 
         contactBtn = (Button) view.findViewById(R.id.GetContacts);
 

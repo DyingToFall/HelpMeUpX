@@ -82,6 +82,10 @@
 
     <ListView
         android:id="@+id/listView3"
+        android:paddingTop="15dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="20dp"
         android:layout_width="328dp"
         android:layout_height="140dp"
         android:layout_marginBottom="58dp"
@@ -96,6 +100,10 @@
 
     <ListView
         android:id="@+id/listView2"
+        android:paddingTop="20dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="20dp"
         android:layout_width="337dp"
         android:layout_height="159dp"
         android:layout_marginLeft="8dp"

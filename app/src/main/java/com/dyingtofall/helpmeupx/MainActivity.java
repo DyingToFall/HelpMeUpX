@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,9 +61,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private static int UPDATE_INTERVAL = 10000; // 10 sec
     private static int FASTEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 10; // 10 meters
+    Button sendBtn;
 
     // UI elements
     private TextView lblLocation;
+    protected SMSHeadlessClass smsSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +76,20 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         lblLocation = (TextView) findViewById(R.id.textView);
 
 
-        /*
+       sendBtn = (Button) findViewById(R.id.SendText);
+        smsSend = new SMSHeadlessClass();
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                //SMS smsSend = new SMS();
+                smsSend.sendSMSMessage();
+                //sendBtn.setBackgroundColor(getResources().getColor(R.color.colorYellow));
+                //Toast.makeText(getContext(), "item clicked : \n" , Toast.LENGTH_LONG).show();
+
+                //msms.sendSMSMessage();    //potential use for when using SMS class
+
+            }
+        });
+
         checkLocation();
 
         // Building the GoogleApi client
@@ -123,12 +139,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     }
                 });
 
-    */
+
 
     }
 
 
-    /*
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -269,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
 
-  */
+
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
@@ -307,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
        // displayLocation();
     }
 
-    /*
+
     private void showAlert() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Enable Location")
@@ -372,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         }
     }
-    */
+
 
 
 }

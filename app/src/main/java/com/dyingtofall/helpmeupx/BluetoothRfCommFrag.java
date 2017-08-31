@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Telephony;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -66,6 +67,7 @@ public class BluetoothRfCommFrag extends DialogFragment
     IntentFilter filter;
     BroadcastReceiver receiver;
     BluetoothDevice bdDevice;
+    protected SMSHeadlessClass sendText;
 
     ArrayList<BluetoothDevice> arrayListBluetoothDevices = null;
     ArrayList<BluetoothDevice> arrayListPairedBluetoothDevices;
@@ -97,23 +99,32 @@ public class BluetoothRfCommFrag extends DialogFragment
                     ByteBuffer bb = ByteBuffer.wrap(readbuff);
                     CharBuffer TempCharBuffer = usaScii.decode(bb);
                     String string = TempCharBuffer.toString();
-                    if(string.equals("fall"))
+                    String newString = string.trim();
+
+                    Bundle args = new Bundle();
+                    args.putString("Message", newString);
+                    SMSHeadlessClass sendMessage = new SMSHeadlessClass();
+                    sendMessage.setArguments(args);
+                    if(newString.equals("fall"))
                     {
                         Toast.makeText(getActivity(), "Help I have fallen",Toast.LENGTH_SHORT).show();
-                        Intent fallIntent = new Intent(getActivity().getApplication(), SMS.class);
-                        String fallString = null;
-                        fallIntent.putExtra("fall", fallString);
-                        startActivity(fallIntent);
+                        sendMessage.sendSMSMessage();
+                        //Intent fallIntent = new Intent(getActivity().getApplication(), SMS.class);
+                        //String fallString = null;
+                        //fallIntent.putExtra("fall", fallString);
+                        //startActivity(fallIntent);
                     }
-                    else if (string.equals("panic"))
+                    else if (newString.equals("panic"))
                     {
                         Toast.makeText(getActivity(), "Oh shit I need help",Toast.LENGTH_SHORT).show();
-                        Intent panicIntent = new Intent(getActivity().getApplication(), SMS.class);
-                        String panicString = null;
-                        panicIntent.putExtra("panic", panicString);
+                        sendMessage.sendSMSMessage();
+                        //Intent panicIntent = new Intent(getActivity().getApplication(), SMS.class);
+                        //String panicString = null;
+                        //panicIntent.putExtra("panic", panicString);
+                        //startActivity(panicIntent);
                     }
                     else
-                        Toast.makeText(getActivity(), string,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), newString,Toast.LENGTH_SHORT).show();
                     break;
 
                 case MESSAGE_WRITE:

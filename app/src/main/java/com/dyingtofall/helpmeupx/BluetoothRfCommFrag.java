@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Telephony;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -52,6 +53,8 @@ public class BluetoothRfCommFrag extends DialogFragment
     protected static final int MESSAGE_READ = 1;
     public static final int MESSAGE_WRITE = 2;
     public static final int STATE_CONNECTED = 3;
+    public static final int ACCESS_FINE_LOCATION = 4;
+    public static final int ACCESS_COARSE_LOCATION = 5;
     public static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     BluetoothAdapter btAdapter;
@@ -217,6 +220,7 @@ public class BluetoothRfCommFrag extends DialogFragment
             {
                 listAdapter.clear();
                 arrayListBluetoothDevices.clear();
+                
                 btAdapter.startDiscovery();
 
             }

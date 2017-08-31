@@ -92,6 +92,7 @@ import java.util.Locale;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_CONTACTS;
+import static com.dyingtofall.helpmeupx.BluetoothRfCommFrag.ACCESS_COARSE_LOCATION;
 
 
 public class MainActivityFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback
@@ -215,6 +216,7 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
                 public void onClick (View view)
                 {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.BLUETOOTH}, REQUEST_BLUETOOTH);
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.BLUETOOTH},ACCESS_COARSE_LOCATION);
                 }
             });
         }

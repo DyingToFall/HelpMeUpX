@@ -51,14 +51,7 @@ public class SMS extends Activity
     //this.context = context;
     protected void sendSMSMessage()
     {
-        Bundle mArgs = new Bundle();
-       // mArgs = getArguments();
-        String incomingString;
-      // Bundle incBundle = getIntent().getExtras();
 
-       // if(savedInstanceState == null)
-       // extras = getIntent().getExtras();
-        //phoneNo = "15413908735";
         phoneNo = "16199525946";
         message = "Help I have fallen and can't get up";
         //PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), SMS.class), 0);   // needs to be changed back to SMS class when moved

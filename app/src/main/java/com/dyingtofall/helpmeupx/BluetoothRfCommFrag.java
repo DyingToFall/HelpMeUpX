@@ -109,19 +109,11 @@ public class BluetoothRfCommFrag extends DialogFragment
                     {
                         Toast.makeText(getActivity(), "Help I have fallen",Toast.LENGTH_SHORT).show();
                         sendMessage.sendSMSMessage();
-                        //Intent fallIntent = new Intent(getActivity().getApplication(), SMS.class);
-                        //String fallString = null;
-                        //fallIntent.putExtra("fall", fallString);
-                        //startActivity(fallIntent);
                     }
                     else if (newString.equals("panic"))
                     {
                         Toast.makeText(getActivity(), "Oh shit I need help",Toast.LENGTH_SHORT).show();
                         sendMessage.sendSMSMessage();
-                        //Intent panicIntent = new Intent(getActivity().getApplication(), SMS.class);
-                        //String panicString = null;
-                        //panicIntent.putExtra("panic", panicString);
-                        //startActivity(panicIntent);
                     }
                     else
                         Toast.makeText(getActivity(), newString,Toast.LENGTH_SHORT).show();

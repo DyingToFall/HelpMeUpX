@@ -10,7 +10,6 @@ import android.telephony.SmsManager;
 public class SMSHeadlessClass extends Fragment
 {
     String phoneNo;
-    String message;
     public MainActivity mainActivity;
 
     @Override
@@ -47,18 +46,6 @@ public class SMSHeadlessClass extends Fragment
 
         }
 
-        // Bundle incBundle = getIntent().getExtras();
-
-        // if(savedInstanceState == null)
-        // extras = getIntent().getExtras();
-        //phoneNo = "15413908735";
-
-        message = "Help I have fallen and can't get up";
-        //PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), SMS.class), 0);   // needs to be changed back to SMS class when moved
-        //PendingIntent pi = PendingIntent.getActivity(mainActivity, 0, new Intent(mainActivity, SMSHeadlessClass.class), 0);
-        // PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(getApplicationContext(), SMS.class), 0);
-
-        //sms.sendTextMessage(phoneNo, null, message, pi, null);
 
     }
 

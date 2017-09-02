@@ -2,8 +2,10 @@ package com.dyingtofall.helpmeupx;
 
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +13,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,58 +41,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
+
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.UUID;
-
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.provider.Settings;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.telephony.SmsManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.content.DialogInterface;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.app.Activity;
-import android.location.Location;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.tasks.OnSuccessListener;
-
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_CONTACTS;
@@ -120,6 +78,8 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
+
+
 
 
         //lblLocation = (TextView) view.findViewById(R.id.textView);
@@ -173,7 +133,6 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
 
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -208,6 +167,7 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     private void requestBluetoothPermissions()
     {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.BLUETOOTH) || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.BLUETOOTH_ADMIN))
+
         {
             Log.i(TAG, "Allowing Bluetooth connection");
             Snackbar.make(mLayout, R.string.permission_bluetooth_rationale, Snackbar.LENGTH_INDEFINITE ).setAction(R.string.ok, new View.OnClickListener()

@@ -14,8 +14,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Telephony;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -78,6 +76,7 @@ public class BluetoothRfCommFrag extends DialogFragment
     ListItemClickedonPaired listItemClickedonPaired;
     Button button1, button2, button3, button4, btnSend;
     String tag = "debugging";
+    String btConnect = "B8:27:EB:F2:99:7A";
 
     private final Handler mHandler= new Handler()
     {
@@ -145,9 +144,13 @@ public class BluetoothRfCommFrag extends DialogFragment
         View bluetoothView = getActivity().getLayoutInflater().inflate(R.layout.rfcomm_main, null);
         builder.setView(bluetoothView);
         builder.setTitle("BlueTooth Options");
-
-
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        //trying to add auto bt connect for sending
+
+        //bdDevice = btAdapter.getRemoteDevice("B8:27:EB:F2:99:7A");
+        //if(btConnect == null)
+        bdDevice = btAdapter.getRemoteDevice(btConnect); //sets a string to the bdDevice for address
 
         arrayListBluetoothDevices = new ArrayList<BluetoothDevice>();
         arrayListpaired = new ArrayList<String>();
@@ -169,7 +172,8 @@ public class BluetoothRfCommFrag extends DialogFragment
         btnSend = (Button) bluetoothView.findViewById(R.id.btnSend);
         etMain = (EditText) bluetoothView.findViewById(R.id.etMain);
 
-
+        ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
+        clientConnectThread.start();
 
 
         //This button turns on bluetooth
@@ -390,8 +394,11 @@ public class BluetoothRfCommFrag extends DialogFragment
 
 
             Log.i("Log", "The bond is created: with" + bdDevice.toString());
+            Toast.makeText(getActivity(), bdDevice.toString(), Toast.LENGTH_SHORT).show();
 
-
+            //sets bluetooth address to array btConnect
+            btConnect = bdDevice.toString();
+            //bdDevice = btAdapter.getRemoteDevice(btConnect);
         }
 
 

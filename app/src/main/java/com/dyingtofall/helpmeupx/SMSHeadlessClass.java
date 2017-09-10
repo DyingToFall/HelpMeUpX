@@ -3,20 +3,28 @@ package com.dyingtofall.helpmeupx;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.telephony.SmsManager;
+import android.widget.TextView;
+
+import static com.dyingtofall.helpmeupx.R.id.textView;
 
 
 public class SMSHeadlessClass extends Fragment
 {
-    String phoneNo;
+   /*
+    TextView textViewCounter;
     public MainActivity mainActivity;
+
+
 
     @Override
     public void onCreate(Bundle bundle)
     {
         super.onCreate(bundle);
         setRetainInstance(true);
+
 
     }
 
@@ -31,6 +39,8 @@ public class SMSHeadlessClass extends Fragment
 
         String incomingString = receiveArgs.getString("Message");
         SmsManager sms = SmsManager.getDefault();
+
+
 
         switch (incomingString)
         {
@@ -48,5 +58,7 @@ public class SMSHeadlessClass extends Fragment
 
 
     }
+*/
+
 
 }

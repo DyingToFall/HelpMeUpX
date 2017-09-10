@@ -58,6 +58,7 @@ public class BluetoothRfCommFrag extends DialogFragment
     BluetoothAdapter btAdapter;
     BluetoothRfCommFrag bluetoothRfCommFrag;
     ClientConnectThread clientConnectThread;
+    MainActivityFragment mainActivityFragment;
 
     ServerConnectedThread serverConnectedThread;
     ArrayList<String> arrayListpaired;
@@ -88,7 +89,7 @@ public class BluetoothRfCommFrag extends DialogFragment
                 case SUCCESS_CONNECT:
                     //Connected via RfComm
                     serverConnectedThread = new ServerConnectedThread((BluetoothSocket)msg.obj);
-                    Toast.makeText(getActivity(),"Connect",Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getActivity(),"Connect",Toast.LENGTH_LONG).show();
                     serverConnectedThread.start();
                     Log.i(tag, "connected");
                     break;
@@ -105,7 +106,7 @@ public class BluetoothRfCommFrag extends DialogFragment
 
                     Bundle args = new Bundle();
                     args.putString("Message", newString);
-                    SMSHeadlessClass sendMessage = new SMSHeadlessClass();
+                    MainActivityFragment sendMessage = new MainActivityFragment();
                     sendMessage.setArguments(args);
                     if(newString.equals("fall"))
                     {

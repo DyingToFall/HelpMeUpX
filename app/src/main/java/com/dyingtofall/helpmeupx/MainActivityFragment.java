@@ -7,7 +7,12 @@ import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +28,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -39,9 +47,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,10 +69,15 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     public static final String TAG1 = "MainActivity";
     private static final int REQUEST_BLUETOOTH = 0;
     private Context context;
-    Button sendBtn;
-    Button contactBtn;
+    public CountDownTimer timer = null;
+    Button contactBtn, cancelBtn;
+    String phoneNo, soundURI;
+    TextView textViewCounter;
+    AlarmSoundPool alarmSoundPool;
+    HandlerHelper handlerHelper;
     protected SMS smsSend;
-
+    AlarmController alarmController;
+    Animation animate = null;
     private final String TAG = "Debugging";
     private final static int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
     protected static final int SUCCESS_CONNECT = 0;
@@ -70,34 +85,67 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
 
 
     // UI elements
-    //private TextView lblLocation;
+    private TextView lblLocation;
+
+
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
 
+        textViewCounter =(TextView) view.findViewById(R.id.textViewAlarm);
 
+        animate = AnimationUtils.loadAnimation(getActivity(), R.anim.animation);
 
+        sendSMSMessage();
 
-        //lblLocation = (TextView) view.findViewById(R.id.textView);
-
-
-        /*sendBtn = (Button) view.findViewById(R.id.SendText);
-        smsSend = new SMS(this, context);
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                //SMS smsSend = new SMS();
-                smsSend.sendSMSMessage();
-                //sendBtn.setBackgroundColor(getResources().getColor(R.color.colorYellow));
-                //Toast.makeText(getContext(), "item clicked : \n" , Toast.LENGTH_LONG).show();
-
-                //msms.sendSMSMessage();    //potential use for when using SMS class
-
+        timer = new CountDownTimer(60000, 1000)
+        {
+            public void onTick(long millisUntilFinished)
+            {
+                textViewCounter.setText("Sending Messages In: " + millisUntilFinished / 1000 + " Seconds");
             }
-        });*/
+
+            public void onFinish()
+            {
+                textViewCounter.setText("Messages Sending!");
+            }
+        };
+
+        cancelBtn = (Button) view.findViewById(R.id.CancelAlarm);
+
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view)
+            {
+                AlarmSoundPool alarmSoundPool = new AlarmSoundPool(getContext());
+                String buttonText = cancelBtn.getText().toString();
+
+                if(buttonText.equals("Ready"))
+                {
+
+                    cancelBtn.startAnimation(animate);
+                    cancelBtn.setText("Cancel");
+                }
+
+                else if(buttonText.equals("Cancel"))
+                {
+                    //
+                    alarmSoundPool.stopSound();
+                    cancelBtn.clearAnimation();
+                    cancelBtn.setText("Ready");
+
+                }
+            }
+        });
+
+
+
+
+        lblLocation = (TextView) view.findViewById(R.id.textView);
 
         contactBtn = (Button) view.findViewById(R.id.GetContacts);
 
@@ -107,8 +155,6 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
             {
                 ContactListDialogFragment cLDFrag = new ContactListDialogFragment();
                 cLDFrag.show(getFragmentManager(),"Contact List Dialog");
-
-
                 //cLDFrag.show(getSupportFragmentManager(),"Contact List Dialog");
 
 
@@ -116,8 +162,106 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         });
 
 
-        //return inflater.inflate(R.layout.fragment_main, container, false);
         return view;
+
+    }
+
+
+    //Currently not being used but would be for in sendSMSMessage() if needed
+    public void doAlpha(View v)
+    {
+        //Animation animate = new Animation();
+
+       // cancelBtn.startAnimation(animate);
+       //contactBtn.startAnimation(animate);
+    }
+
+
+    protected void sendSMSMessage()
+    {
+        //SMSHeadlessClass smsHeadlessClass = new SMSHeadlessClass();
+        //Bundle receiveArgs = new Bundle();
+
+        //receiveArgs = getArguments();
+        phoneNo = "16199525946";
+
+        //smsHeadlessClass.getArguments(receiveArgs);
+
+        //String incomingString = receiveArgs.getString("Message");
+        //SmsManager sms = SmsManager.getDefault();
+
+       // textViewCounter =(TextView) view.findViewById(R.id.textView2);
+
+        SmsManager sms = SmsManager.getDefault();
+        String incomingString = "fall";
+
+        switch (incomingString)
+        {
+            case "fall":
+                String message1 = "Help I have fallen";
+                sms.sendTextMessage(phoneNo, null, message1, null, null);
+                AlarmSoundPool alarmSoundPool = new AlarmSoundPool(getContext());
+                alarmSoundPool.playSound();
+                //alarmSoundPool.playLoop();
+                //cancelBtn.startAnimation(animate);
+
+                break;
+
+            case "panic":
+                String message2 = "Help I pushed the panic button";
+                sms.sendTextMessage(phoneNo, null, message2, null, null);
+                //    alarmController.playSound(soundURI);
+                break;
+
+        }
+
+
+        //Commented out for testing purposes. Will be used for actual run
+       /* HandlerHelper sendHandler = new HandlerHelper(cancelBtn, this, animate, timer);
+        sendHandler.postDelayed(new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+              //doAlpha(contactBtn);
+                Bundle receiveArgs = new Bundle();
+
+                receiveArgs = getArguments();
+                phoneNo = "16199525946";
+                timer.start();
+                cancelBtn.startAnimation(animate);
+                AlarmController alarmController = new AlarmController(context);
+                alarmController.playSound(soundURI);
+
+
+                //String incomingString = receiveArgs.getString("Message");
+                SmsManager sms = SmsManager.getDefault();
+                String incomingString = "fall";
+
+                switch (incomingString)
+                {
+                    case "fall":
+                        String message1 = "Help I have fallen";
+                        sms.sendTextMessage(phoneNo, null, message1, null, null);
+
+                        break;
+
+                    case "panic":
+                        String message2 = "Help I pushed the panic button";
+                        sms.sendTextMessage(phoneNo, null, message2, null, null);
+
+                        break;
+
+                }
+
+            }
+        }, 3000);*/
+
+
+
+
+
 
     }
 
@@ -163,26 +307,6 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     }
 
     private View mLayout;
-
-    private void requestBluetoothPermissions()
-    {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.BLUETOOTH) || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.BLUETOOTH_ADMIN))
-
-        {
-            Log.i(TAG, "Allowing Bluetooth connection");
-            Snackbar.make(mLayout, R.string.permission_bluetooth_rationale, Snackbar.LENGTH_INDEFINITE ).setAction(R.string.ok, new View.OnClickListener()
-            {
-                @Override
-                public void onClick (View view)
-                {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.BLUETOOTH}, REQUEST_BLUETOOTH);
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.BLUETOOTH},ACCESS_COARSE_LOCATION);
-                }
-            });
-        }
-    }
-
-
 
 }
 

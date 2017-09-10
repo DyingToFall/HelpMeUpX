@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         lblLocation = (TextView) findViewById(R.id.textView);
 
 
-       sendBtn = (Button) findViewById(R.id.SendText);
+       /*sendBtn = (Button) findViewById(R.id.SendText);
         smsSend = new SMSHeadlessClass();
         sendBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 //msms.sendSMSMessage();    //potential use for when using SMS class
 
             }
-        });
+        });*/
 
         checkLocation();
 
@@ -140,6 +140,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 permissionsRequired.add("Read Contacts");
             if(!checkPermission(permissionsList, android.Manifest.permission.INTERNET))
                 permissionsRequired.add("Internet");
+            if(!checkPermission(permissionsList, android.Manifest.permission.MODIFY_AUDIO_SETTINGS))
+                permissionsRequired.add("Audio Overide");
 
 
                 if (permissionsList.size() > 0) {
@@ -222,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 perms.put(android.Manifest.permission.SEND_SMS, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.MODIFY_AUDIO_SETTINGS, PackageManager.PERMISSION_GRANTED);
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);
@@ -232,7 +235,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         perms.get(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                         perms.get(android.Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED &&
                         perms.get(android.Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
+                        perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(android.Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_GRANTED){
                     // All Permissions Granted
                     Toast.makeText(MainActivity.this, "All permissions Granted.", Toast.LENGTH_SHORT)
                             .show();
@@ -255,12 +259,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 .create()
                 .show();
     }
-
-    public void iDoNothing()
-    {
-
-    }
-
 
 
     @Override

@@ -35,7 +35,7 @@ public class AlarmSoundPool
         // Load the sounds
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         loaded = true;
-        soundID = soundPool.load(c, R.raw.song, 1);
+        soundID = soundPool.load(c, R.raw.alarm, 1);
     }
 
 
@@ -67,7 +67,7 @@ public class AlarmSoundPool
         public void pauseSound() {
             if (plays) {
                 soundPool.pause(soundID);
-                soundID = soundPool.load(context, R.raw.song, counter);
+                soundID = soundPool.load(context, R.raw.alarm, counter);
                 Toast.makeText(context, "Pause sound", Toast.LENGTH_SHORT).show();
                 plays = false;
             }
@@ -76,7 +76,7 @@ public class AlarmSoundPool
         public void stopSound() {
             if (plays) {
                 soundPool.stop(soundID);
-                soundID = soundPool.load(context, R.raw.song, counter);
+                soundID = soundPool.load(context, R.raw.alarm, counter);
                 Toast.makeText(context, "Stop sound", Toast.LENGTH_SHORT).show();
                 plays = false;
             }

@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -82,6 +83,8 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     private final static int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
     protected static final int SUCCESS_CONNECT = 0;
     protected static final int MESSAGE_READ = 1;
+    SharedPreferences spS;
+    SharedPreferences.Editor eSPS;
 
 
     // UI elements
@@ -114,6 +117,12 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
                 textViewCounter.setText("Messages Sending!");
             }
         };
+
+        spS = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        eSPS = spS.edit();
+        //eSPS.putInt("EmergencySize", 5);
+        eSPS.clear();
+        eSPS.commit();
 
         cancelBtn = (Button) view.findViewById(R.id.CancelAlarm);
 
@@ -154,6 +163,7 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
             public void onClick(View view)
             {
                 ContactListDialogFragment cLDFrag = new ContactListDialogFragment();
+                cLDFrag.setCancelable(false);
                 cLDFrag.show(getFragmentManager(),"Contact List Dialog");
                 //cLDFrag.show(getSupportFragmentManager(),"Contact List Dialog");
 
@@ -292,12 +302,18 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         switch(item.getItemId())
         {
             case R.id.bluetooth:
-            {
+
                 FragmentManager fragmanager = getActivity().getFragmentManager();
                 BluetoothRfCommFrag bluetoothRfCommFrag = new BluetoothRfCommFrag();
                 bluetoothRfCommFrag.show(fragmanager, "bluetooth dialog");
-            }
-            return true;
+                return true;
+
+            case R.id.emergencyList:
+
+                EmergencyListDialogFragment eldFrag = new EmergencyListDialogFragment();
+                eldFrag.setCancelable(false);
+                eldFrag.show(getFragmentManager(),"Emergency List Dialog");
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);

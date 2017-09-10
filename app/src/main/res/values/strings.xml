@@ -5,6 +5,8 @@
     <string name="ok">OK</string>
     <string name="permision_available_bluetooth">Bluetooth Permission has been granted. Preview can now be opened.</string>
     <string name="permission_bluetooth_rationale">Bluetooth permission is needed to show the bluetooth preview.</string>
-    <string name="contact_list_header">"Choose which contacts you wish to include in your emergency contacts."</string>
-    <string name="emergency_list_header">"Choose which numbers you would like to use for this contact."</string>
+    <string name="contact_list_header">"Choose which contacts you wish to include in your emergency contacts.\n"</string>
+    <string name="emergency_list_header">"Choose which numbers you would like to use for "</string>
+    <string name="emergency_dialog_header">"Here is a list of your emergency contact numbers.\n\n"</string>
+    <string name="empty_emergency_list">"Your emergency list is empty!  Please add some contacts.\n\n"</string>
 </resources>

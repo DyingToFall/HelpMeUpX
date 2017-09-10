@@ -1,7 +1,7 @@
 package com.dyingtofall.helpmeupx;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,21 +12,20 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by James W on 8/29/2017.
+ * Created by James W on 9/3/2017.
  */
 
-public class PhonePickAdapter extends ArrayAdapter {
-    ArrayList<String> pArrayList;
-    Context cons;
-    SharedPreferences sPpp = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-    SharedPreferences.Editor sPppE;
+public class EmergencyListAdapter extends ArrayAdapter{
 
+    ArrayList<String> eArrayList;
+    Context conte;
 
-    public PhonePickAdapter(@NonNull Context context, int textViewResourceId, ArrayList<String> strings) {
-        super(context,textViewResourceId, strings);
-        pArrayList = strings;
-        cons = context;
+    public EmergencyListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull ArrayList<String> strings) {
+        super(context, resource, strings);
+        eArrayList = strings;
+        conte = context;
     }
+
 
     @Override
     public int getCount() {
@@ -36,10 +35,10 @@ public class PhonePickAdapter extends ArrayAdapter {
     @Override
     public String getItem(int i)
     {
-        if ((null != this.pArrayList) && !this.pArrayList.isEmpty())
+        if ((null != this.eArrayList) && !this.eArrayList.isEmpty())
         {
-            if ((i >= 0) && (i < this.pArrayList.size()))
-                return this.pArrayList.get(i);
+            if ((i >= 0) && (i < this.eArrayList.size()))
+                return this.eArrayList.get(i);
         }
 
         return null;
@@ -57,31 +56,15 @@ public class PhonePickAdapter extends ArrayAdapter {
         }
 
 
-
-
         TextView listContact = (TextView) v.findViewById(R.id.contactInfo);
         String conInfo;
 
-        conInfo = pArrayList.get(position);
+        conInfo = eArrayList.get(position);
         listContact.setText(conInfo);
 
-
-
-
-
-
-
-
-
-
-        if (sPpp.contains(conInfo))
-        {
-            v.setBackgroundColor(getContext().getResources().getColor(R.color.colorGreen));
-        }
 
 
         return v;
 
     }
-
 }

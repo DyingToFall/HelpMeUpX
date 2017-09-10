@@ -1,24 +1,18 @@
 package com.dyingtofall.helpmeupx;
 
 
-import android.*;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,15 +24,18 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -68,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private LocationRequest mLocationRequest;
 
+    //ReverseGeocodingService rgs = new ReverseGeocodingService(getApplicationContext());
+
     // Location updates intervals in sec
     private static int UPDATE_INTERVAL = 10000; // 10 sec
     private static int FASTEST_INTERVAL = 5000; // 5 sec
@@ -78,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private TextView lblLocation;
     protected SMSHeadlessClass smsSend;
 
+
+    //DELETE THIS STUFF LATER!!!
+    //set to true if you want this working
+    boolean gpsBool = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,20 +91,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         lblLocation = (TextView) findViewById(R.id.textView);
 
 
-       /*sendBtn = (Button) findViewById(R.id.SendText);
-        smsSend = new SMSHeadlessClass();
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                //SMS smsSend = new SMS();
-                smsSend.sendSMSMessage();
-                //sendBtn.setBackgroundColor(getResources().getColor(R.color.colorYellow));
-                //Toast.makeText(getContext(), "item clicked : \n" , Toast.LENGTH_LONG).show();
 
-                //msms.sendSMSMessage();    //potential use for when using SMS class
 
-            }
-        });*/
 
+
+
+        if (gpsBool)
+        {
         checkLocation();
 
         // Building the GoogleApi client
@@ -124,24 +121,25 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
             displayLocation();
 
+        }
+        }
+
             List permissionsRequired = new ArrayList();
             final List<String> permissionsList = new ArrayList<String>();
-            if(!checkPermission(permissionsList, android.Manifest.permission.BLUETOOTH))
+            if(!checkPermission(permissionsList, Manifest.permission.BLUETOOTH))
                 permissionsRequired.add("Bluetooth permission");
-            if(!checkPermission(permissionsList, android.Manifest.permission.BLUETOOTH_ADMIN))
+            if(!checkPermission(permissionsList, Manifest.permission.BLUETOOTH_ADMIN))
                 permissionsRequired.add("Bluetooth admin permission");
-            if(!checkPermission(permissionsList, android.Manifest.permission.ACCESS_FINE_LOCATION))
+            if(!checkPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
                 permissionsRequired.add("Fine Location");
-            if(!checkPermission(permissionsList, android.Manifest.permission.ACCESS_COARSE_LOCATION))
+            if(!checkPermission(permissionsList, Manifest.permission.ACCESS_COARSE_LOCATION))
                 permissionsRequired.add("Coarse Location");
-            if(!checkPermission(permissionsList, android.Manifest.permission.SEND_SMS))
+            if(!checkPermission(permissionsList, Manifest.permission.SEND_SMS))
                 permissionsRequired.add("Send SMS");
-            if(!checkPermission(permissionsList, android.Manifest.permission.READ_CONTACTS))
+            if(!checkPermission(permissionsList, Manifest.permission.READ_CONTACTS))
                 permissionsRequired.add("Read Contacts");
-            if(!checkPermission(permissionsList, android.Manifest.permission.INTERNET))
+            if(!checkPermission(permissionsList, Manifest.permission.INTERNET))
                 permissionsRequired.add("Internet");
-            if(!checkPermission(permissionsList, android.Manifest.permission.MODIFY_AUDIO_SETTINGS))
-                permissionsRequired.add("Audio Overide");
 
 
                 if (permissionsList.size() > 0) {
@@ -167,33 +165,35 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     return;
                 }
 
-        }
 
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
+        if (gpsBool)
+        {
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
 
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // ...
-                            displayLocation();
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // ...
+                                displayLocation();
+
+                            }
                         }
-                    }
-                });
-
+                    });
+        }
 
 
     }
@@ -217,26 +217,24 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             case 11:
                 Map<String, Integer> perms = new HashMap<String, Integer>();
                 // Initial
-                perms.put(android.Manifest.permission.BLUETOOTH, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.BLUETOOTH_ADMIN, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.SEND_SMS, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.MODIFY_AUDIO_SETTINGS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.BLUETOOTH, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.BLUETOOTH_ADMIN, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.SEND_SMS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);
                 // Check for ACCESS_FINE_LOCATION
-                if (perms.get(android.Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(android.Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(android.Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(android.Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(android.Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_GRANTED){
+                if (perms.get(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
                     // All Permissions Granted
                     Toast.makeText(MainActivity.this, "All permissions Granted.", Toast.LENGTH_SHORT)
                             .show();
@@ -261,11 +259,14 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
 
+
     @Override
     protected void onStart() {
         super.onStart();
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
+        if (gpsBool) {
+            if (mGoogleApiClient != null) {
+                mGoogleApiClient.connect();
+            }
         }
     }
 
@@ -273,19 +274,21 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected void onResume() {
         super.onResume();
 
-        checkPlayServices();
+            if (gpsBool) {
+                checkPlayServices();
 
-        // Resuming the periodic location updates
-        if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
-            startLocationUpdates();
-        }
+                // Resuming the periodic location updates
+                if (mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+                    startLocationUpdates();
+                }
+            }
     }
 
 
 
     private void displayLocation() {
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -302,7 +305,25 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
 
-            lblLocation.setText(latitude + ", " + longitude);
+            List<android.location.Address> address;
+            List<Address> addresses = null;
+            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+            //rgs.doInBackground(mLastLocation);
+            try {
+                // get all the addresses fro the given latitude, and longitude
+                address = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+            } catch (IOException e) {
+                address = null;
+            }
+            if (address == null)
+            {
+                lblLocation.setText("No location was found.");
+            }
+            //there are a ton of other address features we can use!!!
+            String streetAddress = address.get(0).getAddressLine(0); //this gets the street name and number
+            String province = address.get(0).getAdminArea(); //this gets the city info
+            String country = address.get(0).getCountryName(); //gets country name
+            lblLocation.setText(streetAddress + "\n" + province);
 
         } else {
 
@@ -379,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected void startLocationUpdates() {
 
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding

@@ -1,5 +1,7 @@
 package com.dyingtofall.helpmeupx;
 
+import java.util.ArrayList;
+
 /**
  * Created by James W on 8/16/2017.
  */
@@ -9,7 +11,7 @@ public class ContactListInfo {
     String contactName;
     String contactPhone;
     //String phoneTwo, phoneThree, phoneFour, phoneFive, phoneSix, phoneSeven, phoneEight;
-    String contactPhones[];
+    ArrayList<String> contactPhones;
 
     ContactListInfo(){
        this.contactName = "";
@@ -27,15 +29,11 @@ public class ContactListInfo {
         return contactPhone;
     }
 
-    public String[] getContactPhones()
+    public ArrayList<String> getContactPhones()
     {
-        String cP[] = new String[12];
-        int i = 0;
-        while ((contactPhones[i] != null)&&(i < 12))
-        {
-            cP[i] = contactPhones[i];
-            i = i + 1;
-        }
+        ArrayList<String> cP = new ArrayList<String>();
+        cP = contactPhones;
+
 
         return cP;
     }
@@ -77,6 +75,6 @@ public class ContactListInfo {
     public void setPhoneEight(String pE) { phoneEight = pE; }
     */
 
-    public void setContactPhones(String[] cPs) {contactPhones = cPs;}
+    public void setContactPhones(ArrayList<String> cPs) {contactPhones = cPs;}
 
 }

@@ -8,6 +8,11 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
+        android:id="@+id/emergencyList"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="EmergencyList" />
+
+    <item
         android:title="BlueTooth"
         android:id="@+id/bluetooth"></item>
 

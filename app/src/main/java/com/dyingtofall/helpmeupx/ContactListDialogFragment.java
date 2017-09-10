@@ -3,6 +3,9 @@ package com.dyingtofall.helpmeupx;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +24,7 @@ import java.util.ArrayList;
  * Created by James W on 8/15/2017.
  */
 
-public class ContactListDialogFragment extends DialogFragment {
+public class ContactListDialogFragment extends DialogFragment  {
 
     //ArrayList<String> cArrayList;
     //ArrayAdapter<String> cAdapter;
@@ -33,6 +36,15 @@ public class ContactListDialogFragment extends DialogFragment {
     ContactListAdapter cLAdapter;
     Cursor cursor;
     TextView textView;
+    int numHighlighting = -1;
+    SharedPreferences sPref;
+    SharedPreferences.Editor sEdit;
+    boolean greenColor = false;
+    Bundle args = new Bundle();
+    PhonePickerDialogFragment pLD;
+
+
+
 
 
     @Override
@@ -42,6 +54,7 @@ public class ContactListDialogFragment extends DialogFragment {
         View clView = getActivity().getLayoutInflater().inflate(R.layout.contact_list_layout, null);
         builder.setView(clView);
         builder.setTitle("Contacts");
+
 
 
 /*
@@ -200,8 +213,8 @@ public class ContactListDialogFragment extends DialogFragment {
 
                     firstCount = true;
 
-                    String numList[];
-                    numList = new String[12];
+                    ArrayList<String> numList;
+                    numList = new ArrayList<String>();
 
                     //This is to read multiple phone numbers associated with the same contact
                     Cursor phoneCursor = contentResolver.query(PhoneCONTENT_URI, null, Phone_CONTACT_ID + " = ?", new String[]{contact_id}, null);
@@ -215,12 +228,12 @@ public class ContactListDialogFragment extends DialogFragment {
                         if (!firstCount) {
                             tempContact = new ContactListInfo();
                             tempContact.setContactName(name);
-                            numList[hasPhoneNumber] = phoneNumber;
+                            numList.add(hasPhoneNumber, phoneNumber);
                             hasPhoneNumber = hasPhoneNumber + 1;
                            // cLArrayList.add(counter, tempContact);
                         } else {
                             firstCount = false;
-                            numList[hasPhoneNumber] = phoneNumber;
+                            numList.add(hasPhoneNumber, phoneNumber);
                             hasPhoneNumber = hasPhoneNumber + 1;
                            // cLArrayList.add(counter, tempContact);
                         }
@@ -244,40 +257,140 @@ public class ContactListDialogFragment extends DialogFragment {
 
             }
             contactList.setAdapter(cLAdapter);
+
+            sPref = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            sEdit = sPref.edit();
+
+
+            /*
+            if (numHighlighting > -1)
+            {
+
+                //View tempView = cLAdapter.getView(numHighlighting, clView, contactList);
+                //View tempView = contactList.getChildAt(numHighlighting);
+               // View tempView = clView.findViewById(10000+numHighlighting);
+                 View tempView = contactList.findViewById(10000+numHighlighting);
+                //View tempView = contactList.getChildAt(numHighlighting - contactList.getFirstVisiblePosition());
+                if (tempView != null)
+                {
+                    tempView.setBackgroundColor(getResources().getColor(R.color.colorGreen));
+                    cLAdapter.notifyDataSetChanged();
+                }
+            }
+            */
         }
 
         contactList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         contactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // Mark this view row as selected.
-                view.setSelected(true);
-                view.setBackgroundColor(getResources().getColor(R.color.colorGreen));
-                Toast.makeText(getContext(), "item clicked : \n" + contactList.getPositionForView(view), Toast.LENGTH_SHORT).show();
-                Bundle args = new Bundle();
+
 
                 String currContName = cLArrayList.get(i).getContactName();
-                String currContInfo[];
+                ArrayList<String> currContInfo = new ArrayList<String>();
                 currContInfo = cLArrayList.get(i).getContactPhones();
+
+                view.setBackgroundColor(getResources().getColor(R.color.colorGreen));
 
                 args.putInt("DialogPosition", i); //might not need this right now
                 args.putString("PhoneName", currContName);
-                args.putStringArray("PhoneNumbers", currContInfo);
+                args.putStringArrayList("PhoneNumbers", currContInfo);
 
                 //args.putParcelableArrayList("cArrayList", cLArrayList);
                 //args.putStringArrayList("cArraylist", cLArrayList);
 
-                PhonePickerDialogFragment pLD = new PhonePickerDialogFragment();
+                //getDialog().dismiss();
+                pLD = new PhonePickerDialogFragment();
                 pLD.setArguments(args);
+                pLD.setCancelable(false);
                 pLD.show(getFragmentManager(),"Phone Picker Dialog");
+
+                /*
+                new Thread(new Runnable() {
+                    public void run() {
+                        pLD.show(getFragmentManager(),"Phone Picker Dialog");
+
+                        while (pLD.isVisible())
+                        {
+                            try {
+                                Thread.sleep(1000);
+                            }
+                            catch(InterruptedException ie)
+                            {
+
+                            }
+                        }
+
+
+                    }
+                }).start();
+
+                greenColor = args.getBoolean("green");
+                if (greenColor == true)
+
+                {
+                    contactList.getSelectedView().setBackgroundColor(getResources().getColor(R.color.colorGreen));
+                } else
+
+                {
+                    contactList.getSelectedView().setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                }
+                */
+
             }
         });
 
 
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                Toast.makeText(getContext(), "Adding contacts to the emergency list.", Toast.LENGTH_SHORT).show();
+                dialogInterface.dismiss();
+            }
+        });
+
+        /*
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+
+            }
+        });
+
+        */
+
         return builder.create();
     }
 
+    /*
+    @Override
+    public void show(FragmentManager manager, String tag)
+    {
+        if (greenColor)
+        {
+            contactList.getSelectedView().setBackgroundColor(getResources().getColor(R.color.colorGreen));
+        }
+        else
+        {
+            contactList.getSelectedView().setBackgroundColor(getResources().getColor(R.color.colorWhite));
+        }
+        getDialog().show();
+    }
+*/
 
+/*
+    void setBackColor(boolean bCheck)
+    {
+        greenColor = bCheck;
+        if (greenColor == true)
+        {
 
-
+        }
+        //fragment.contactList.getSelectedView().setBackgroundColor(getResources().getColor(R.color.colorWhite));
+    }
+*/
 }

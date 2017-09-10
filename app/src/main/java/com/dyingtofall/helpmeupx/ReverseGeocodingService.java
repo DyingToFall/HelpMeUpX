@@ -45,7 +45,7 @@ public class ReverseGeocodingService extends AsyncTask<Location, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         // set the address on the UI thread
-       // aListener.onAddressAvailable(aAddress);
+       //.onAddressAvailable(aAddress);
     }
 
 }

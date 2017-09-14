@@ -24,17 +24,26 @@ public class AlarmSoundPool
     {
         this.context = c;
 
-        audioManager = (AudioManager) context.getSystemService(AUDIO_SERVICE);
+        audioManager = (AudioManager) c.getSystemService(AUDIO_SERVICE);
+
        // audioManager.setStreamVolume(AudioManager.STREAM_ALARM, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM), AudioManager.FLAG_PLAY_SOUND);
         actVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         maxVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         volume = actVolume / maxVolume;
+
         counter = 0;
 
         // Load the sounds
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        loaded = true;
+        soundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status)
+            {
+                loaded = true;
+            }
+        });
+
         soundID = soundPool.load(c, R.raw.alarm, 1);
     }
 

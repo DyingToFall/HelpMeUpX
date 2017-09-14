@@ -8,10 +8,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.media.SoundPool;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
@@ -60,7 +64,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.BLUETOOTH_ADMIN;
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.content.Context.AUDIO_SERVICE;
 import static com.dyingtofall.helpmeupx.BluetoothRfCommFrag.ACCESS_COARSE_LOCATION;
 
 
@@ -72,12 +78,12 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     private Context context;
     public CountDownTimer timer = null;
     Button contactBtn, cancelBtn;
-    String phoneNo, soundURI;
+    String phoneNo;
     TextView textViewCounter;
-    AlarmSoundPool alarmSoundPool;
+    public static AudioManager audioManager;
+    public static MediaPlayer mediaPlayer;
     HandlerHelper handlerHelper;
-    protected SMS smsSend;
-    AlarmController alarmController;
+    Intent intent;
     Animation animate = null;
     private final String TAG = "Debugging";
     private final static int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
@@ -87,9 +93,9 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     SharedPreferences.Editor eSPS;
 
 
+
     // UI elements
     private TextView lblLocation;
-
 
 
 
@@ -103,7 +109,12 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
 
         animate = AnimationUtils.loadAnimation(getActivity(), R.anim.animation);
 
-        sendSMSMessage();
+        //Overriding audio to max volume
+        audioManager = (AudioManager) getContext().getSystemService(getActivity().AUDIO_SERVICE);
+        final int userVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), AudioManager.FLAG_PLAY_SOUND);
+        final AlarmService alarmService = new AlarmService();
+
 
         timer = new CountDownTimer(60000, 1000)
         {
@@ -130,7 +141,7 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view)
             {
-                AlarmSoundPool alarmSoundPool = new AlarmSoundPool(getContext());
+
                 String buttonText = cancelBtn.getText().toString();
 
                 if(buttonText.equals("Ready"))
@@ -138,12 +149,15 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
 
                     cancelBtn.startAnimation(animate);
                     cancelBtn.setText("Cancel");
+                    sendSMSMessage();
+                    //Toast.makeText(getActivity(), "Your Number is" + phoneNo, Toast.LENGTH_LONG).show();
+
                 }
 
                 else if(buttonText.equals("Cancel"))
                 {
-                    //
-                    alarmSoundPool.stopSound();
+                    mediaPlayer.stop();
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, userVolume, AudioManager.FLAG_PLAY_SOUND);
                     cancelBtn.clearAnimation();
                     cancelBtn.setText("Ready");
 
@@ -152,13 +166,9 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         });
 
 
-
-
         lblLocation = (TextView) view.findViewById(R.id.textView);
 
         contactBtn = (Button) view.findViewById(R.id.GetContacts);
-
-
         contactBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view)
             {
@@ -177,6 +187,8 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     }
 
 
+
+
     //Currently not being used but would be for in sendSMSMessage() if needed
     public void doAlpha(View v)
     {
@@ -187,13 +199,18 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     }
 
 
-    protected void sendSMSMessage()
+    public void sendSMSMessage()
     {
         //SMSHeadlessClass smsHeadlessClass = new SMSHeadlessClass();
         //Bundle receiveArgs = new Bundle();
 
         //receiveArgs = getArguments();
+        //This is used to grab numbers from shared preferences
+
+
+        //phoneNo = spS.getString("EmNum0", "16199525946");
         phoneNo = "16199525946";
+
 
         //smsHeadlessClass.getArguments(receiveArgs);
 
@@ -205,22 +222,20 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         SmsManager sms = SmsManager.getDefault();
         String incomingString = "fall";
 
+
         switch (incomingString)
         {
             case "fall":
                 String message1 = "Help I have fallen";
                 sms.sendTextMessage(phoneNo, null, message1, null, null);
-                AlarmSoundPool alarmSoundPool = new AlarmSoundPool(getContext());
-                alarmSoundPool.playSound();
-                //alarmSoundPool.playLoop();
-                //cancelBtn.startAnimation(animate);
-
+                mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm);
+                mediaPlayer.start();
+                mediaPlayer.setLooping(true);
                 break;
 
             case "panic":
                 String message2 = "Help I pushed the panic button";
                 sms.sendTextMessage(phoneNo, null, message2, null, null);
-                //    alarmController.playSound(soundURI);
                 break;
 
         }

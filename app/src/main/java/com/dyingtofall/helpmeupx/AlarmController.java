@@ -80,21 +80,57 @@ public class AlarmController
 
     }
 
-    public void stopSound()
+    public void stopSound(String soundURI)
     {
+        Uri alarmSound = null;
+        Uri ringtoneUri = Uri.parse("android.resource://com.dyingtofall.helpmeupx/raw/sound");
+        //Uri ringtoneUri = Uri.parse("A")
+
+        try
+        {
+            alarmSound = Uri.parse(soundURI);
+        }catch(Exception e){
+            alarmSound = ringtoneUri;
+        }
+        finally{
+            if(alarmSound == null){
+                alarmSound = ringtoneUri;
+            }
+        }
 // reset the volume to what it was before we changed it.
 
 
         //mp = new MediaPlayer();
         mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, userVolume, AudioManager.FLAG_PLAY_SOUND);
-        if(mp != null)
+
+        try {
+
+            if(mp != null)
+            {
+                mp.setDataSource(context, alarmSound);
+                mp.stop();
+                mp.release();
+                mp = null;
+
+            }
+
+
+        } catch (IOException e)
         {
+            Toast.makeText(context, "I think it stopped?...", Toast.LENGTH_LONG).show();
+
+        }
+
+        /*if(mp != null)
+        {
+
             mp.stop();
             mp.release();
             mp = null;
-        }
+        }*/
 
     }
+
     /*public void releasePlayer()
     {
         mp.release();

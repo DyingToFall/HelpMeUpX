@@ -140,6 +140,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 permissionsRequired.add("Read Contacts");
             if(!checkPermission(permissionsList, Manifest.permission.INTERNET))
                 permissionsRequired.add("Internet");
+        if(!checkPermission(permissionsList, Manifest.permission.MODIFY_AUDIO_SETTINGS))
+            permissionsRequired.add("Audio Modified");
 
 
                 if (permissionsList.size() > 0) {
@@ -224,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 perms.put(Manifest.permission.SEND_SMS, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.MODIFY_AUDIO_SETTINGS, PackageManager.PERMISSION_GRANTED);
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);
@@ -234,7 +237,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         perms.get(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                         perms.get(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED &&
                         perms.get(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
-                        perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
+                        perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.MODIFY_AUDIO_SETTINGS) == PackageManager.PERMISSION_GRANTED){
                     // All Permissions Granted
                     Toast.makeText(MainActivity.this, "All permissions Granted.", Toast.LENGTH_SHORT)
                             .show();

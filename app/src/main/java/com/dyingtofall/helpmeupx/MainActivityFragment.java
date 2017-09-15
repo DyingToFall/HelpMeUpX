@@ -115,6 +115,18 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), AudioManager.FLAG_PLAY_SOUND);
         final AlarmService alarmService = new AlarmService();
 
+        //Stuff for database testing
+        DatabaseHelper db = new DatabaseHelper(getContext());
+        db.addEvent();
+        ArrayList<String> array_list = db.getAllEvents();
+
+
+        for(int i = 0; i < array_list.size(); i++)
+        {
+            array_list.get(i);
+            Toast.makeText(getActivity(), array_list.get(i), Toast.LENGTH_SHORT).show();
+        }
+
 
         timer = new CountDownTimer(60000, 1000)
         {

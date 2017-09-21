@@ -2,6 +2,7 @@ package com.dyingtofall.helpmeupx;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private FusedLocationProviderClient mFusedLocationClient;
     LocationManager locationManager;
 
+    BluetoothRfCommFrag bluetoothRfCommFrag;
 
     // LogCat tag
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -88,7 +91,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         setContentView(R.layout.activity_main);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        lblLocation = (TextView) findViewById(R.id.textView);
+        //lblLocation = (TextView) findViewById(R.id.textView);
+
+
 
 
 
@@ -290,17 +295,16 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
 
-    private void displayLocation() {
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
+    public String displayLocation() {
+     if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling.
+            //    ActivityCompat#requestP
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            return "My current location is unknown.";
         }
         mLastLocation = LocationServices.FusedLocationApi
                 .getLastLocation(mGoogleApiClient);
@@ -319,20 +323,22 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             } catch (IOException e) {
                 address = null;
             }
-            if (address == null)
+            /*if (address == null)
             {
                 lblLocation.setText("No location was found.");
-            }
+            }*/
             //there are a ton of other address features we can use!!!
             String streetAddress = address.get(0).getAddressLine(0); //this gets the street name and number
             String province = address.get(0).getAdminArea(); //this gets the city info
             String country = address.get(0).getCountryName(); //gets country name
-            lblLocation.setText(streetAddress + "\n" + province);
+            //lblLocation.setText(streetAddress);
+            String smsAddress = streetAddress;
+            return smsAddress;
 
         } else {
 
-            lblLocation
-                    .setText("(Couldn't get the location. Make sure location is enabled on the device)");
+            //lblLocation.setText("(Couldn't get the location. Make sure location is enabled on the device)");
+            return "My current location is unknown.";
         }
     }
 

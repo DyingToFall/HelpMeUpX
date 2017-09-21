@@ -3,4 +3,5 @@
     android:layout_height="wrap_content"
     android:id="@+id/textViewName"
     android:textStyle="bold"
+    android:textColor="@color/colorBlack"
     xmlns:android="http://schemas.android.com/apk/res/android" />

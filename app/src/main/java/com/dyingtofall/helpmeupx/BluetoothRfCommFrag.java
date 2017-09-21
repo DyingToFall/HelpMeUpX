@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,6 +27,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,7 +43,7 @@ import java.util.UUID;
 import static android.app.Activity.RESULT_CANCELED;
 
 
-public class BluetoothRfCommFrag extends DialogFragment
+public class BluetoothRfCommFrag extends android.support.v4.app.DialogFragment
 {
     private final String TAG = "Debugging";
     private final static int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
@@ -59,7 +62,11 @@ public class BluetoothRfCommFrag extends DialogFragment
     BluetoothRfCommFrag bluetoothRfCommFrag;
     ClientConnectThread clientConnectThread;
     MainActivityFragment mainActivityFragment;
+    MainActivity mainActivity;
+    //SharedPreferences sharedPreferences;
 
+   SharedPreferences sharedPreferences;
+    SharedPreferences.Editor sharedEditor;
     ServerConnectedThread serverConnectedThread;
     ArrayList<String> arrayListpaired;
     ArrayAdapter<String> listAdapter,adapter;
@@ -75,9 +82,19 @@ public class BluetoothRfCommFrag extends DialogFragment
     ArrayList<BluetoothDevice> arrayListPairedBluetoothDevices;
     ListItemClicked listItemClicked;
     ListItemClickedonPaired listItemClickedonPaired;
+    TextView paired, available;
     Button button1, button2, button3, button4, btnSend;
     String tag = "debugging";
+    //String for ground zero pi
     String btConnect = "B8:27:EB:F2:99:7A";
+    //String for panic button testing at home
+    //String btConnect = "B8:27:EB:E2:80:B4";
+
+    BluetoothRfCommFrag(MainActivityFragment mAct)
+    {
+        super();
+        mainActivityFragment = mAct;
+    }
 
     private final Handler mHandler= new Handler()
     {
@@ -106,17 +123,17 @@ public class BluetoothRfCommFrag extends DialogFragment
 
                     Bundle args = new Bundle();
                     args.putString("Message", newString);
-                    MainActivityFragment sendMessage = new MainActivityFragment();
-                    sendMessage.setArguments(args);
+                    mainActivityFragment.setArguments(args);
+
                     if(newString.equals("fall"))
                     {
                         Toast.makeText(getActivity(), "Help I have fallen",Toast.LENGTH_SHORT).show();
-                        sendMessage.sendSMSMessage();
+                        mainActivityFragment.sendSMSMessage();
                     }
-                    else if (newString.equals("panic"))
+                    else if (newString.equals("pani"))
                     {
-                        Toast.makeText(getActivity(), "Oh shit I need help",Toast.LENGTH_SHORT).show();
-                        sendMessage.sendSMSMessage();
+                       // Toast.makeText(getActivity(), "Oh shit I need help",Toast.LENGTH_SHORT).show();
+                        mainActivityFragment.sendSMSMessage();
                     }
                     else
                         Toast.makeText(getActivity(), newString,Toast.LENGTH_SHORT).show();
@@ -146,12 +163,29 @@ public class BluetoothRfCommFrag extends DialogFragment
         builder.setView(bluetoothView);
         builder.setTitle("BlueTooth Options");
         btAdapter = BluetoothAdapter.getDefaultAdapter();
+        sharedPreferences = getContext().getSharedPreferences("prefs",Context.MODE_PRIVATE);
+        sharedEditor = sharedPreferences.edit();
 
         //trying to add auto bt connect for sending
 
         //bdDevice = btAdapter.getRemoteDevice("B8:27:EB:F2:99:7A");
         //if(btConnect == null)
-        bdDevice = btAdapter.getRemoteDevice(btConnect); //sets a string to the bdDevice for address
+
+        /*bdDevice = btAdapter.getRemoteDevice(btConnect); //sets a string to the bdDevice for address
+        sharedEditor.putString("btConnect", btConnect);
+        sharedEditor.commit();
+        String actualConnect = sharedPreferences.getString("btConnect", "");
+        if(actualConnect.equals(""))
+        {
+
+        }
+        else
+        {
+            bdDevice = btAdapter.getRemoteDevice(actualConnect);
+            ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
+            clientConnectThread.start();
+        }*/
+        letsRun();
 
         arrayListBluetoothDevices = new ArrayList<BluetoothDevice>();
         arrayListpaired = new ArrayList<String>();
@@ -167,14 +201,16 @@ public class BluetoothRfCommFrag extends DialogFragment
         listAdapter.notifyDataSetChanged();
         listViewPaired.setAdapter(adapter);
         button1 = (Button) bluetoothView.findViewById(R.id.button1);
-        button2 = (Button) bluetoothView.findViewById(R.id.button2);
+       // button2 = (Button) bluetoothView.findViewById(R.id.button2);
         button3 = (Button) bluetoothView.findViewById(R.id.button3);
-        button4 = (Button) bluetoothView.findViewById(R.id.button4);
-        btnSend = (Button) bluetoothView.findViewById(R.id.btnSend);
-        etMain = (EditText) bluetoothView.findViewById(R.id.etMain);
+       // button4 = (Button) bluetoothView.findViewById(R.id.button4);
+       // btnSend = (Button) bluetoothView.findViewById(R.id.btnSend);
+       // etMain = (EditText) bluetoothView.findViewById(R.id.etMain);
+        available = (TextView) bluetoothView.findViewById(R.id.textViewAvailable);
+        paired = (TextView) bluetoothView.findViewById(R.id.textViewPaired);
 
-        ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
-        clientConnectThread.start();
+       // ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
+        //clientConnectThread.start();
 
 
         //This button turns on bluetooth
@@ -188,34 +224,6 @@ public class BluetoothRfCommFrag extends DialogFragment
             }
         });
 
-        etMain.setOnEditorActionListener(mWriteListener);
-
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String message = etMain.getText().toString();
-                sendMessage(message);
-            }
-        });
-
-        //This button turns off bluetooth
-        button2.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick (View view)
-            {
-                if (btAdapter.isEnabled())
-                {
-
-                    listAdapter.clear();
-                    btAdapter.disable();
-                } else
-
-                {
-                    Toast.makeText(getActivity(), "Dont worry it's already off", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
 
         //This button searches for a bluetooth device
         button3.setOnClickListener(new View.OnClickListener()
@@ -231,15 +239,7 @@ public class BluetoothRfCommFrag extends DialogFragment
             }
         });
 
-        //This button makes the device discoverable
-        button4.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick (View view)
-            {
-                makeDiscoverable();
-            }
-        });
+
 
         //This button closes bluetooth window
         builder.setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener()
@@ -257,38 +257,23 @@ public class BluetoothRfCommFrag extends DialogFragment
 
     }
 
-
-   //For in app messaging over bluetooth
-    private void sendMessage (String message)
+    public void letsRun()
     {
-
-        outStringBuffer = new StringBuffer("");
-        if(message.length() > 0)
+        bdDevice = btAdapter.getRemoteDevice(btConnect); //sets a string to the bdDevice for address
+        sharedEditor.putString("btConnect", btConnect);
+        sharedEditor.commit();
+        String actualConnect = sharedPreferences.getString("btConnect", "");
+        if(actualConnect.equals(""))
         {
-            byte[] send = message.getBytes();
 
-            ServerConnectedThread r;
-            r = serverConnectedThread;
-            r.write(send);
-            outStringBuffer.setLength(0);
-            etMain.setText(outStringBuffer);
-
+        }
+        else
+        {
+            bdDevice = btAdapter.getRemoteDevice(actualConnect);
+            ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
+            clientConnectThread.start();
         }
     }
-
-    //For in app messaging over bluetooth
-    private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
-        public boolean onEditorAction(TextView view, int actionId,
-                                      KeyEvent event) {
-            if (actionId == EditorInfo.IME_NULL
-                    && event.getAction() == KeyEvent.ACTION_UP) {
-                String message = view.getText().toString();
-                sendMessage(message);
-            }
-            return true;
-        }
-    };
-
 
 
     private void init() {
@@ -342,6 +327,25 @@ public class BluetoothRfCommFrag extends DialogFragment
 
     }
 
+    public void autoConnect()
+    {
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        bdDevice = btAdapter.getRemoteDevice(btConnect); //sets a string to the bdDevice for address
+        sharedPreferences = getContext().getSharedPreferences("prefs",Context.MODE_PRIVATE);
+        sharedEditor = sharedPreferences.edit();
+        String actualConnect = sharedPreferences.getString("btConnect", "");
+        if(actualConnect.equals(""))
+        {
+
+        }
+        else
+        {
+            bdDevice = btAdapter.getRemoteDevice(actualConnect);
+            ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
+            clientConnectThread.start();
+        }
+    }
+
     private void createBond(BluetoothDevice btDevice){
 
         try
@@ -381,6 +385,8 @@ public class BluetoothRfCommFrag extends DialogFragment
     }
 
 
+
+
     public class ListItemClicked implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -399,6 +405,9 @@ public class BluetoothRfCommFrag extends DialogFragment
 
             //sets bluetooth address to array btConnect
             btConnect = bdDevice.toString();
+            sharedEditor.putString("btConnect", btConnect);
+            sharedEditor.commit();
+
             //bdDevice = btAdapter.getRemoteDevice(btConnect);
         }
 
@@ -406,7 +415,8 @@ public class BluetoothRfCommFrag extends DialogFragment
     }
 
 
-    private class ClientConnectThread extends Thread {
+    public class ClientConnectThread extends Thread
+    {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
         BluetoothAdapter bluetoothAdapter;
@@ -425,7 +435,8 @@ public class BluetoothRfCommFrag extends DialogFragment
             mmSocket = tmp;
         }
 
-        public void run() {
+        public void run()
+        {
             btAdapter.cancelDiscovery();
             try {
                 mmSocket.connect();
@@ -438,7 +449,6 @@ public class BluetoothRfCommFrag extends DialogFragment
 
             mHandler.obtainMessage(SUCCESS_CONNECT, mmSocket).sendToTarget();
             ManageConnectedSocket(mmSocket);
-
         }
 
         void ManageConnectedSocket(BluetoothSocket Socket)
@@ -464,7 +474,8 @@ public class BluetoothRfCommFrag extends DialogFragment
 
 
 
-    private  class ServerConnectedThread extends Thread {
+    private  class ServerConnectedThread extends Thread
+    {
         private final BluetoothSocket mmSocket;
 
         private final InputStream mmInStream;
@@ -518,11 +529,14 @@ public class BluetoothRfCommFrag extends DialogFragment
         }
 
         /* Call this from the main activity to shutdown the connection */
-        public void cancel() {
+        public void cancel()
+        {
             try {
                 mmSocket.close();
             } catch (IOException e) { }
         }
+
+
     }
 
 
@@ -548,11 +562,17 @@ public class BluetoothRfCommFrag extends DialogFragment
         }
     }
 
-    private void makeDiscoverable() {
+    public void connectDevice()
+    {
+        ClientConnectThread clientConnectThread = new ClientConnectThread(bdDevice, btAdapter, MY_UUID);
+        clientConnectThread.start();
+    }
+
+    /*private void makeDiscoverable() {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 150);
         startActivity(discoverableIntent);
-    }
+    }*/
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

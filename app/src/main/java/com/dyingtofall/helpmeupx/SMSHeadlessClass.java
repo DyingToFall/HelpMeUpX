@@ -8,7 +8,7 @@ import android.support.v4.app.Fragment;
 import android.telephony.SmsManager;
 import android.widget.TextView;
 
-import static com.dyingtofall.helpmeupx.R.id.textView;
+
 
 
 public class SMSHeadlessClass extends Fragment

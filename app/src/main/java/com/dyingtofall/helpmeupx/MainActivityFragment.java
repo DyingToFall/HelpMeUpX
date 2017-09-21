@@ -5,9 +5,28 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.ChangedPackages;
+import android.content.pm.FeatureInfo;
+import android.content.pm.InstrumentationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionGroupInfo;
+import android.content.pm.PermissionInfo;
+import android.content.pm.ProviderInfo;
+import android.content.pm.ResolveInfo;
+import android.content.pm.ServiceInfo;
+import android.content.pm.SharedLibraryInfo;
+import android.content.pm.VersionedPackage;
+import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -18,7 +37,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.UserHandle;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.annotation.XmlRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -83,6 +108,9 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     public static AudioManager audioManager;
     public static MediaPlayer mediaPlayer;
     HandlerHelper handlerHelper;
+    MainActivity mainActivity;
+    BluetoothRfCommFrag bluetoothRfCommFrag;
+    AlarmController alarmController;
     Intent intent;
     Animation animate = null;
     private final String TAG = "Debugging";
@@ -91,11 +119,12 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     protected static final int MESSAGE_READ = 1;
     SharedPreferences spS;
     SharedPreferences.Editor eSPS;
-
+    PackageManager packageManager;
+    BluetoothHeadless bluetoothHeadless;
 
 
     // UI elements
-    private TextView lblLocation;
+   // private TextView lblLocation;
 
 
 
@@ -104,10 +133,18 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
+       // bluetoothRfCommFrag = new BluetoothRfCommFrag(this);
+        //bluetoothRfCommFrag.connectDevice();
+        bluetoothHeadless = new BluetoothHeadless(this);
+        bluetoothHeadless.onCreate(savedInstanceState);
 
         textViewCounter =(TextView) view.findViewById(R.id.textViewAlarm);
 
         animate = AnimationUtils.loadAnimation(getActivity(), R.anim.animation);
+       // bluetoothRfCommFrag = new BluetoothRfCommFrag(this);
+        //bluetoothRfCommFrag.autoConnect();
+         //bluetoothRfCommFrag = new BluetoothRfCommFrag(this);
+        //bluetoothRfCommFrag.show(getFragmentManager(), "bluetooth dialog");
 
         //Overriding audio to max volume
         audioManager = (AudioManager) getContext().getSystemService(getActivity().AUDIO_SERVICE);
@@ -116,16 +153,16 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         final AlarmService alarmService = new AlarmService();
 
         //Stuff for database testing
-        DatabaseHelper db = new DatabaseHelper(getContext());
-        db.addEvent();
-        ArrayList<String> array_list = db.getAllEvents();
+       // DatabaseHelper db = new DatabaseHelper(getContext());
+        //db.addEvent();
+        //ArrayList<String> array_list = db.getAllEvents();
 
 
-        for(int i = 0; i < array_list.size(); i++)
+      /*  for(int i = 0; i < array_list.size(); i++)
         {
             array_list.get(i);
-            Toast.makeText(getActivity(), array_list.get(i), Toast.LENGTH_SHORT).show();
-        }
+            //Toast.makeText(getActivity(), array_list.get(i), Toast.LENGTH_SHORT).show();
+        }*/
 
 
         timer = new CountDownTimer(60000, 1000)
@@ -144,8 +181,8 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         spS = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         eSPS = spS.edit();
         //eSPS.putInt("EmergencySize", 5);
-        eSPS.clear();
-        eSPS.commit();
+        //eSPS.clear();
+        //eSPS.commit();
 
         cancelBtn = (Button) view.findViewById(R.id.CancelAlarm);
 
@@ -156,29 +193,29 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
 
                 String buttonText = cancelBtn.getText().toString();
 
-                if(buttonText.equals("Ready"))
+
+
+                 if(buttonText.equals("Cancel"))
                 {
-
-                    cancelBtn.startAnimation(animate);
-                    cancelBtn.setText("Cancel");
-                    sendSMSMessage();
-                    //Toast.makeText(getActivity(), "Your Number is" + phoneNo, Toast.LENGTH_LONG).show();
-
-                }
-
-                else if(buttonText.equals("Cancel"))
-                {
-                    mediaPlayer.stop();
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, userVolume, AudioManager.FLAG_PLAY_SOUND);
+                   // mediaPlayer.stop();
+                   // audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, userVolume, AudioManager.FLAG_PLAY_SOUND);
                     cancelBtn.clearAnimation();
-                    cancelBtn.setText("Ready");
+                    cancelBtn.setText("");
+                    /*  if(mediaPlayer.isPlaying())
+                    {
+                        mediaPlayer.stop();
+                    }*/
+                    timer.cancel();
+                    textViewCounter.setText("Timer");
+
+                   // mediaPlayer.stop();
 
                 }
             }
         });
 
 
-        lblLocation = (TextView) view.findViewById(R.id.textView);
+        //lblLocation = (TextView) view.findViewById(R.id.textView);
 
         contactBtn = (Button) view.findViewById(R.id.GetContacts);
         contactBtn.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +230,7 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
             }
         });
 
-
+       //bluetoothRfCommFrag.dismiss();
         return view;
 
     }
@@ -214,47 +251,69 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
     public void sendSMSMessage()
     {
         //SMSHeadlessClass smsHeadlessClass = new SMSHeadlessClass();
-        //Bundle receiveArgs = new Bundle();
+        Bundle receiveArgs = new Bundle();
+        cancelBtn.startAnimation(animate);
+        //mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm);
+        //mediaPlayer.start();
+        //mediaPlayer.setLooping(true);
+        cancelBtn.setText("Cancel");
+        timer.start();
+        mainActivity = (MainActivity) getActivity();
+        String smsSend = mainActivity.displayLocation();
+        ArrayList<String> phoneString = new ArrayList<>();
+        receiveArgs = getArguments();
 
-        //receiveArgs = getArguments();
         //This is used to grab numbers from shared preferences
+        if  (spS.getInt("EmergencySize", 0) == 0)
+        {
+            Toast.makeText(getActivity(), "You have no emergency contacts!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        for (int i = 0; i < spS.getInt("EmergencySize", 0); i++)
+        {
+            phoneString.add(spS.getString("EmNum" + Integer.toString(i), null));
+        }
+        phoneNo = spS.getString("EmNum0", "16199525946");
+      //  phoneNo = "16199525946";
 
-
-        //phoneNo = spS.getString("EmNum0", "16199525946");
-        phoneNo = "16199525946";
-
-
+       // mainActivity
         //smsHeadlessClass.getArguments(receiveArgs);
 
-        //String incomingString = receiveArgs.getString("Message");
+        String incomingString = receiveArgs.getString("Message");
         //SmsManager sms = SmsManager.getDefault();
 
        // textViewCounter =(TextView) view.findViewById(R.id.textView2);
 
         SmsManager sms = SmsManager.getDefault();
-        String incomingString = "fall";
+       //String incomingString = "fall";
 
 
-        switch (incomingString)
+      /* switch (incomingString)
         {
             case "fall":
-                String message1 = "Help I have fallen";
-                sms.sendTextMessage(phoneNo, null, message1, null, null);
-                mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm);
-                mediaPlayer.start();
-                mediaPlayer.setLooping(true);
+                String message1 = "Help! I have fallen at " + smsSend;
+                for (int j =0; j <  phoneString.size(); j++)
+            {
+                sms.sendTextMessage(phoneString.get(j), null, message1, null, null);
+            }
+             //   mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm);
+               // mediaPlayer.start();
+                //mediaPlayer.setLooping(true);
                 break;
 
-            case "panic":
-                String message2 = "Help I pushed the panic button";
-                sms.sendTextMessage(phoneNo, null, message2, null, null);
+            case "pani":
+                String message2 = "Help! I pushed the panic button at " + smsSend;
+                for (int j =0; j <  phoneString.size(); j++)
+                {
+                    sms.sendTextMessage(phoneString.get(j), null, message2, null, null);
+                }
                 break;
 
-        }
+        }*/
 
 
         //Commented out for testing purposes. Will be used for actual run
-       /* HandlerHelper sendHandler = new HandlerHelper(cancelBtn, this, animate, timer);
+       HandlerHelper sendHandler = new HandlerHelper(cancelBtn, this, animate, timer);
         sendHandler.postDelayed(new Runnable()
         {
 
@@ -263,37 +322,68 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
             {
               //doAlpha(contactBtn);
                 Bundle receiveArgs = new Bundle();
-
                 receiveArgs = getArguments();
-                phoneNo = "16199525946";
-                timer.start();
-                cancelBtn.startAnimation(animate);
-                AlarmController alarmController = new AlarmController(context);
-                alarmController.playSound(soundURI);
+                String smsSend = mainActivity.displayLocation();
+                ArrayList<String> phoneString = new ArrayList<>();
 
 
-                //String incomingString = receiveArgs.getString("Message");
+                //receiveArgs = new Bundle();
+
+
+              //  phoneNo = "16199525946";
+
+                //cancelBtn.startAnimation(animate);
+                //AlarmController alarmController = new AlarmController(context);
+                //alarmController.playSound(soundURI);
+
+
+                String incomingString = receiveArgs.getString("Message");
+                if  (spS.getInt("EmergencySize", 0) == 0)
+                {
+                    Toast.makeText(getActivity(), "You have no emergency contacts!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                for (int i = 0; i < spS.getInt("EmergencySize", 0); i++)
+                {
+                    phoneString.add(spS.getString("EmNum" + Integer.toString(i), null));
+                }
+                phoneNo = spS.getString("EmNum0", "16199525946");
                 SmsManager sms = SmsManager.getDefault();
-                String incomingString = "fall";
+               // String incomingString = "fall";
 
                 switch (incomingString)
                 {
                     case "fall":
-                        String message1 = "Help I have fallen";
-                        sms.sendTextMessage(phoneNo, null, message1, null, null);
+                        //String message1 = "Help I have fallen";
+                        String message1 = "Help! I have fallen at " + smsSend;
+                        for (int j =0; j <  phoneString.size(); j++)
+                        {
+                            sms.sendTextMessage(phoneString.get(j), null, message1, null, null);
+                        }
+                       // sms.sendTextMessage(phoneNo, null, message1, null, null);
+                        //mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm);
+                        //mediaPlayer.start();
+                        //mediaPlayer.setLooping(true);
+
 
                         break;
 
-                    case "panic":
-                        String message2 = "Help I pushed the panic button";
-                        sms.sendTextMessage(phoneNo, null, message2, null, null);
+                    case "pani":
+                       // String message2 = "Help I pushed the panic button";
+                        String message2 = "Help! I pushed the panic button at " + smsSend;
+                        for (int j =0; j <  phoneString.size(); j++)
+                        {
+                            sms.sendTextMessage(phoneString.get(j), null, message2, null, null);
+                        }
+                       // sms.sendTextMessage(phoneNo, null, message2, null, null);
+
 
                         break;
 
                 }
 
             }
-        }, 3000);*/
+        }, 3000);
 
 
 
@@ -330,9 +420,9 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         {
             case R.id.bluetooth:
 
-                FragmentManager fragmanager = getActivity().getFragmentManager();
-                BluetoothRfCommFrag bluetoothRfCommFrag = new BluetoothRfCommFrag();
-                bluetoothRfCommFrag.show(fragmanager, "bluetooth dialog");
+              //  FragmentManager fragmanager = getActivity().getFragmentManager();
+                BluetoothRfCommFrag bluetoothRfCommFrag = new BluetoothRfCommFrag(this);
+                bluetoothRfCommFrag.show(getFragmentManager(), "bluetooth dialog");
                 return true;
 
             case R.id.emergencyList:

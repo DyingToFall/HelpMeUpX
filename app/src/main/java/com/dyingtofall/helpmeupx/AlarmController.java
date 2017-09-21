@@ -37,11 +37,12 @@ public class AlarmController
         userVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
 
         mp = new MediaPlayer();
+        mp = MediaPlayer.create(context, R.raw.alarm);
     }
-    public void playSound(String soundURI)
+    public void playSound()
     {
 
-        Uri alarmSound = null;
+        /*Uri alarmSound = null;
         Uri ringtoneUri = Uri.parse("android.resource://com.dyingtofall.helpmeupx/raw/sound");
         //Uri ringtoneUri = Uri.parse("A")
 
@@ -76,7 +77,8 @@ public class AlarmController
 
         }
         // set the volume to what we want it to be.  In this case it's max volume for the alarm stream.
-        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM), AudioManager.FLAG_PLAY_SOUND);
+        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM), AudioManager.FLAG_PLAY_SOUND);*/
+
 
     }
 
@@ -102,6 +104,8 @@ public class AlarmController
 
         //mp = new MediaPlayer();
         mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, userVolume, AudioManager.FLAG_PLAY_SOUND);
+
+
 
         try {
 

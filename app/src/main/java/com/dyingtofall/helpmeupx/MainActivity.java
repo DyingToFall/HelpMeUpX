@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     //DELETE THIS STUFF LATER!!!
     //set to true if you want this working
-    boolean gpsBool = true;
+    boolean gpsBool = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         }
         }
-
+/*
             List permissionsRequired = new ArrayList();
             final List<String> permissionsList = new ArrayList<String>();
             if(!checkPermission(permissionsList, Manifest.permission.BLUETOOTH))
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                             11);
                     return;
                 }
-
+*/
 
 
         if (gpsBool)

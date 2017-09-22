@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fancydialogbackground">
+
+    <TextView
+        android:id="@+id/backPicHeaderText"
+        android:layout_gravity="center_horizontal"
+        android:textSize="36sp"
+        android:textAlignment="center"
+        android:text="@string/perm_bluetooth_header"
+        android:textStyle="bold"
+        android:shadowColor="@color/colorBlack"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="0.1"
+        android:textColor="@color/colorRed"
+        android:layout_width="400sp"
+        android:layout_height="100sp"
+        android:layout_marginTop="25sp"
+        android:layout_marginLeft="25sp"
+        android:layout_marginRight="25sp" />
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:src="@mipmap/how_to_search"
+            android:contentDescription="@null"
+            android:id="@+id/blue_helper_image"
+            android:layout_height="250sp"
+            android:layout_width="250sp"
+      />
+        <TextView
+            android:layout_height="250sp"
+            android:layout_width="100sp"
+            android:layout_marginTop="50sp"
+            android:id="@+id/blue_helper_text"
+            android:text="@string/perm_bluetooth_step_one"
+            />
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_weight="8"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="200sp">
+
+        <Button
+            android:id="@+id/backHelpButton"
+            android:layout_width="wrap_content"
+            android:layout_height="60sp"
+            android:background="@drawable/fancybutton"
+            android:layout_marginLeft="25sp"
+            android:text="Back"
+            android:textColor="@color/colorGreen"
+            />
+
+        <Button
+            android:id="@+id/forwardHelpButton"
+            android:layout_width="wrap_content"
+            android:layout_height="60sp"
+            android:background="@drawable/fancybutton"
+            android:layout_marginLeft="25sp"
+            android:text="Next"
+            android:textColor="@color/colorGreen"
+            />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="100sp"
+       />
+
+</LinearLayout>
+
+

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/settings_header"
+        android:text="@string/settings_header"
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="2"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/settings_maintext"
+        android:text="@string/settings_maintext"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="3"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginLeft="25sp"
+        android:layout_marginRight="25sp">
+
+    </TextView>
+
+    <Button
+        android:id="@+id/ringtone_button"
+        android:layout_width="300sp"
+        android:layout_height="40sp"
+        android:background="@drawable/fancybutton"
+        android:text="Alarm Ringtone"
+        android:textColor="@color/colorGreen"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:layout_marginBottom="25sp"
+        />
+
+    <Button
+        android:id="@+id/mess_delay_button"
+        android:layout_width="300sp"
+        android:layout_height="40sp"
+        android:background="@drawable/fancybutton"
+        android:text="Messaging Delay"
+        android:textColor="@color/colorGreen"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:layout_marginBottom="25sp"
+        />
+
+    <Button
+        android:id="@+id/mess_interval_button"
+        android:layout_width="300sp"
+        android:layout_height="40sp"
+        android:background="@drawable/fancybutton"
+        android:text="Messaging Intervals"
+        android:textColor="@color/colorGreen"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:layout_marginBottom="25sp"
+        />
+
+    <Button
+        android:id="@+id/display_settings_button"
+        android:layout_width="300sp"
+        android:layout_height="40sp"
+        android:background="@drawable/fancybutton"
+        android:text="Display Settings"
+        android:textColor="@color/colorGreen"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:layout_marginBottom="25sp"
+        />
+
+    <Button
+        android:id="@+id/settings_finish_button"
+        android:layout_width="300sp"
+        android:layout_height="40sp"
+        android:background="@drawable/fancybutton"
+        android:text="Finish"
+        android:textColor="@color/colorGreen"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:layout_marginBottom="25sp"
+        />
+
+</LinearLayout>

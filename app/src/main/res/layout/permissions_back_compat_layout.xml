@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fancydialogbackground">
+
+    <TextView
+        android:id="@+id/backHeaderText"
+        android:layout_gravity="center_horizontal"
+        android:textSize="36sp"
+        android:textAlignment="center"
+        android:text="@string/perm_bluetooth_header"
+        android:textStyle="bold"
+        android:shadowColor="@color/colorBlack"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="0.1"
+        android:textColor="@color/colorRed"
+        android:layout_width="400sp"
+        android:layout_height="200sp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="25sp"
+        android:layout_marginLeft="25sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="25sp"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/backMainText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/perm_bluetooth_initial_maintext"
+        android:textColor="@color/colorBlack"
+        android:layout_marginLeft="25sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backHeaderText"
+        android:layout_marginBottom="300sp"
+        android:layout_marginRight="25sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="50sp"
+        />
+
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
+    android:id="@+id/backGridLayout"
+    android:columnCount="2"
+    android:rowCount="1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginLeft="25sp"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/backMainText"
+    android:layout_marginBottom="100sp"
+    android:layout_marginRight="25sp"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintHorizontal_bias="0.484"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:layout_marginTop="125sp"
+    android:layout_marginStart="8sp"
+    android:layout_marginEnd="8sp">
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/fancybutton"
+        android:text="Back"
+        android:textColor="@color/colorGreen"
+        android:layout_column="0"
+        android:layout_row="0"
+        />
+
+    <Button
+        android:id="@+id/forwardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/fancybutton"
+        android:layout_marginLeft="25sp"
+        android:text="Next"
+        android:textColor="@color/colorGreen"
+        android:layout_column="1"
+        android:layout_row="0"
+        />
+
+    </GridLayout>
+
+
+
+
+
+</android.support.constraint.ConstraintLayout>

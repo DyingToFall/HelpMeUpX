@@ -1,57 +1,17 @@
 package com.dyingtofall.helpmeupx;
 
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.app.FragmentManager;
-import android.bluetooth.BluetoothAdapter;
-import android.content.ComponentName;
-import android.content.DialogInterface;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.ChangedPackages;
-import android.content.pm.FeatureInfo;
-import android.content.pm.InstrumentationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionGroupInfo;
-import android.content.pm.PermissionInfo;
-import android.content.pm.ProviderInfo;
-import android.content.pm.ResolveInfo;
-import android.content.pm.ServiceInfo;
-import android.content.pm.SharedLibraryInfo;
-import android.content.pm.VersionedPackage;
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.media.SoundPool;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.UserHandle;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.annotation.XmlRes;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -61,38 +21,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.BLUETOOTH_ADMIN;
-import static android.Manifest.permission.READ_CONTACTS;
-import static android.content.Context.AUDIO_SERVICE;
-import static com.dyingtofall.helpmeupx.BluetoothRfCommFrag.ACCESS_COARSE_LOCATION;
 
 
 public class MainActivityFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback
@@ -201,10 +133,13 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         contactBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view)
             {
-                ContactListDialogFragment cLDFrag = new ContactListDialogFragment();
-                cLDFrag.setCancelable(false);
-                cLDFrag.show(getFragmentManager(),"Contact List Dialog");
-                //cLDFrag.show(getSupportFragmentManager(),"Contact List Dialog");
+                //ContactListDialogFragment cLDFrag = new ContactListDialogFragment();
+                //cLDFrag.setCancelable(false);
+                //cLDFrag.show(getFragmentManager(),"Contact List Dialog");
+                InitialSetupOverviewsDialog isDialog = new InitialSetupOverviewsDialog();
+                isDialog.setCancelable(false);
+                isDialog.show(getFragmentManager(), "Initial Setup Dialog");
+
 
 
             }
@@ -364,7 +299,12 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
                 eldFrag.setCancelable(false);
                 eldFrag.show(getFragmentManager(),"Emergency List Dialog");
                 return true;
+            case R.id.action_settings:
 
+                SettingsMainDialog smd = new SettingsMainDialog();
+                smd.setCancelable(false);
+                smd.show(getFragmentManager(),"Settings Main Dialog");
+                return true;
             case R.id.reliabilityDatabase:
 
                 ReliabilityDatabaseDialogFrag reliabilityDatabaseDialogFrag = new ReliabilityDatabaseDialogFrag();

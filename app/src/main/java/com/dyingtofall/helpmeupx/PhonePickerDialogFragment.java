@@ -173,7 +173,7 @@ public class PhonePickerDialogFragment extends DialogFragment {
                         editor.putString(pLArrayList.get(z), pLArrayList.get(z));
                         editor.putString("EmNum" + Integer.toString(tempNum),pLArrayList.get(z));
                         editor.putString("EmName" + Integer.toString(tempNum), currentName);
-                        Toast.makeText(getContext(), "EmNum" + Integer.toString(tempNum), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "EmNum" + Integer.toString(tempNum), Toast.LENGTH_SHORT).show();
                         if (tempNum == 0)
                         {
                             editor.putInt("EmergencySize", 1);
@@ -219,20 +219,7 @@ public class PhonePickerDialogFragment extends DialogFragment {
                         }
                     }
                 }
-                if (highlight == true)
-                {
-                    editor.putString(currentName, currentName);
-                   // mArgs.putBoolean("green", true);
-                    //mArgs.putString("conName", currentName);
-                }
-                else
-                {
-                    if (sharedPreferences.contains(currentName))
-                    {
-                        editor.remove(currentName);
-                    }
-                    //mArgs.putBoolean("green", false);
-                }
+
                 if (sharedPreferences.contains("EmergencySize"))
                 {
                     editor.putInt("EmergencySize", tempNum);

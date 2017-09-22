@@ -82,10 +82,20 @@ public class ContactListAdapter extends ArrayAdapter<ContactListInfo> {
         listContact.setText(contactName);
 
 
-        if (sP.contains(contactName))
+        Integer contactNums = sP.getInt("EmergencySize",0);
+
+        if (contactNums > 0)
         {
-            v.setBackgroundColor(getContext().getResources().getColor(R.color.colorGreen));
+            for (int i = 0; i < contactNums; i++)
+            {
+                String tempName = sP.getString("EmName"+Integer.toString(i),"Failed to grab Number Error");
+                if (tempName.equals(contactName))
+                {
+                    v.setBackgroundColor(getContext().getResources().getColor(R.color.colorGreen));
+                }
+            }
         }
+
 
 
         /*

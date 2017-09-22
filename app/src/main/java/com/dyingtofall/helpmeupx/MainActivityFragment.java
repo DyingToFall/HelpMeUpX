@@ -270,7 +270,10 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
 
 
 
-
+    public void doesNothing()
+    {
+        
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)

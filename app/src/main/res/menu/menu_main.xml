@@ -16,4 +16,12 @@
         android:title="BlueTooth"
         android:id="@+id/bluetooth"></item>
 
+    <item
+        android:title="Event List"
+        android:id="@+id/emergencyDatabase"></item>
+
+    <item
+        android:title="Reliability List"
+        android:id="@+id/reliabilityDatabase"></item>
+
 </menu>

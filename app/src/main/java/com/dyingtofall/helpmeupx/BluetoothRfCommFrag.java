@@ -127,7 +127,7 @@ public class BluetoothRfCommFrag extends android.support.v4.app.DialogFragment
 
                     if(newString.equals("fall"))
                     {
-                        Toast.makeText(getActivity(), "Help I have fallen",Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getActivity(), "Help I have fallen",Toast.LENGTH_SHORT).show();
                         mainActivityFragment.sendSMSMessage();
                     }
                     else if (newString.equals("pani"))

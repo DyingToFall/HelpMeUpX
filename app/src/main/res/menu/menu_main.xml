@@ -14,14 +14,14 @@
 
     <item
         android:title="BlueTooth"
-        android:id="@+id/bluetooth"></item>
+        android:id="@+id/bluetooth"/>
 
     <item
         android:title="Event List"
-        android:id="@+id/emergencyDatabase"></item>
+        android:id="@+id/emergencyDatabase"/>
 
     <item
         android:title="Reliability List"
-        android:id="@+id/reliabilityDatabase"></item>
+        android:id="@+id/reliabilityDatabase"/>
 
 </menu>

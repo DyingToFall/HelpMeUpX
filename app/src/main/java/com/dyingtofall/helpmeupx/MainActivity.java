@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     //DELETE THIS STUFF LATER!!!
     //set to true if you want this working
-    boolean gpsBool = false;
+    boolean gpsBool = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -26,9 +26,13 @@ public class DialogDismisser {
                 dialogFragment.dismissAllowingStateLoss();
             }
 
-            FragmentManager childFragmentManager = fragment.getChildFragmentManager();
-            if (childFragmentManager != null)
-                dismissAllDialogs(childFragmentManager);
+            if (fragment.getChildFragmentManager()!=null)
+            {
+                FragmentManager childFragmentManager = fragment.getChildFragmentManager();
+                if (childFragmentManager != null)
+                    dismissAllDialogs(childFragmentManager);
+            }
+
         }
     }
 }

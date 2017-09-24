@@ -46,7 +46,7 @@ public class PermsAlarmMessageInitialDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle bundle) {
         super.onCreate(bundle);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_back_compat_layout, null);
+        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_back_enhanced_layout, null);
         builder.setView(setupView);
 
         //last bit of contacts

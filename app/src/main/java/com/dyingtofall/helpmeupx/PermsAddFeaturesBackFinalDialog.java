@@ -46,7 +46,7 @@ public class PermsAddFeaturesBackFinalDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle bundle) {
         super.onCreate(bundle);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_back_compat_layout, null);
+        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_back_enhanced_layout, null);
         builder.setView(setupView);
 
         finHeader = (TextView) setupView.findViewById(R.id.backHeaderText);
@@ -71,6 +71,7 @@ public class PermsAddFeaturesBackFinalDialog extends DialogFragment {
                 {
                     finMainText.setText(R.string.perm_addfeat_back_process_finaltext);
                     finDialogState=finDialogState + 1;
+                    finforwardButton.setText("Finish");
                 }
                 else if (finDialogState==2)
                 {
@@ -102,6 +103,7 @@ public class PermsAddFeaturesBackFinalDialog extends DialogFragment {
                 {
                     finMainText.setText(R.string.perm_addfeat_back_process_finaltext);
                     finDialogState=3;
+                    finforwardButton.setText("Finish");
                 }
 
 

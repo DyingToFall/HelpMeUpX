@@ -68,8 +68,8 @@ public class MainActivityFragment extends Fragment implements ActivityCompat.OnR
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
 
-        bluetoothHeadless = new BluetoothHeadless(this);
-        bluetoothHeadless.onCreate(savedInstanceState);
+        //bluetoothHeadless = new BluetoothHeadless(this);
+        //bluetoothHeadless.onCreate(savedInstanceState);
 
         textViewCounter =(TextView) view.findViewById(R.id.textViewAlarm);
 

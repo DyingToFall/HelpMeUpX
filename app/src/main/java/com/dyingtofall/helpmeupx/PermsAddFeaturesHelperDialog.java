@@ -46,7 +46,7 @@ public class PermsAddFeaturesHelperDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle bundle) {
         super.onCreate(bundle);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_pic_back_layout, null);
+        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_pic_enhanced_layout, null);
         builder.setView(setupView);
 
         afhHeader = (TextView) setupView.findViewById(R.id.backPicHeaderText);
@@ -58,7 +58,7 @@ public class PermsAddFeaturesHelperDialog extends DialogFragment {
         afhHeader.setText(R.string.perm_addfeat_header);
         afhMainText.setText(R.string.perm_addfeat_db_step_one);
         //change later have no image resource yet
-        afhImage.setImageResource(R.mipmap.main_window);
+        afhImage.setImageResource(R.mipmap.database_emergency_list);
         afhbackButton.setVisibility(View.INVISIBLE);
 
         afhforwardButton.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +67,7 @@ public class PermsAddFeaturesHelperDialog extends DialogFragment {
                 if (afhDialogState==0)
                 {
                     afhMainText.setText(R.string.perm_addfeat_db_step_two);
+                    afhImage.setImageResource(R.mipmap.database_reliability_list);
                     afhDialogState = afhDialogState + 1;
                     afhbackButton.setVisibility(View.VISIBLE);
                 }
@@ -97,11 +98,13 @@ public class PermsAddFeaturesHelperDialog extends DialogFragment {
 
                 if (afhDialogState==0 || afhDialogState==1) {
                     afhMainText.setText(R.string.perm_addfeat_db_step_one);
+                    afhImage.setImageResource(R.mipmap.database_emergency_list);
                     afhDialogState = 0;
                     afhbackButton.setVisibility(View.INVISIBLE);
                 }
                 else if (afhDialogState==2)
                 {
+                    afhImage.setImageResource(R.mipmap.database_reliability_list);
                     afhMainText.setText(R.string.perm_addfeat_db_step_two);
                     afhDialogState = afhDialogState - 1;
                 }

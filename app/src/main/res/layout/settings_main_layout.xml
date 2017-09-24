@@ -23,7 +23,7 @@
         android:layout_height="80sp"
         android:layout_gravity="center_horizontal"
         android:layout_weight="3"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginLeft="25sp"
         android:layout_marginRight="25sp">
@@ -33,7 +33,7 @@
     <Button
         android:id="@+id/ringtone_button"
         android:layout_width="300sp"
-        android:layout_height="40sp"
+        android:layout_height="50sp"
         android:background="@drawable/fancybutton"
         android:text="Alarm Ringtone"
         android:textColor="@color/colorGreen"
@@ -45,7 +45,7 @@
     <Button
         android:id="@+id/mess_delay_button"
         android:layout_width="300sp"
-        android:layout_height="40sp"
+        android:layout_height="50sp"
         android:background="@drawable/fancybutton"
         android:text="Messaging Delay"
         android:textColor="@color/colorGreen"
@@ -57,7 +57,7 @@
     <Button
         android:id="@+id/mess_interval_button"
         android:layout_width="300sp"
-        android:layout_height="40sp"
+        android:layout_height="50sp"
         android:background="@drawable/fancybutton"
         android:text="Messaging Intervals"
         android:textColor="@color/colorGreen"
@@ -69,7 +69,7 @@
     <Button
         android:id="@+id/display_settings_button"
         android:layout_width="300sp"
-        android:layout_height="40sp"
+        android:layout_height="50sp"
         android:background="@drawable/fancybutton"
         android:text="Display Settings"
         android:textColor="@color/colorGreen"
@@ -81,7 +81,7 @@
     <Button
         android:id="@+id/settings_finish_button"
         android:layout_width="300sp"
-        android:layout_height="40sp"
+        android:layout_height="50sp"
         android:background="@drawable/fancybutton"
         android:text="Finish"
         android:textColor="@color/colorGreen"

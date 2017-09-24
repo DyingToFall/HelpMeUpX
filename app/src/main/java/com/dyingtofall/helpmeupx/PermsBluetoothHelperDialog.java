@@ -49,7 +49,7 @@ public class PermsBluetoothHelperDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle bundle) {
         super.onCreate(bundle);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_pic_back_layout, null);
+        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_pic_enhanced_layout, null);
         builder.setView(setupView);
 
         bthHeader = (TextView) setupView.findViewById(R.id.backPicHeaderText);
@@ -94,6 +94,11 @@ public class PermsBluetoothHelperDialog extends DialogFragment {
                     //btcFrag.setCancelable(false);
                     //FragmentManager fman = getActivity().getFragmentManager();
                     //btcFrag.show(fman, "bluetooth dialog");
+
+                    MainActivityFragment mf = new MainActivityFragment();
+                    BluetoothRfCommFrag btcDialog = new BluetoothRfCommFrag(mf);
+                    btcDialog.setCancelable(false);
+                    btcDialog.show(getFragmentManager(), "Bluetooth Setup Dialog");
 
                 }
 

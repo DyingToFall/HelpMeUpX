@@ -48,7 +48,7 @@ public class PermsContactsHelperDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle bundle) {
         super.onCreate(bundle);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_pic_back_layout, null);
+        View setupView = getActivity().getLayoutInflater().inflate(R.layout.permissions_pic_enhanced_layout, null);
         builder.setView(setupView);
 
         chHeader = (TextView) setupView.findViewById(R.id.backPicHeaderText);
@@ -96,11 +96,11 @@ public class PermsContactsHelperDialog extends DialogFragment {
                 else if (chDialogState==5)
                 {
                     chMainText.setText(R.string.perm_contacts_step_seven);
-                    chImage.setImageResource(R.mipmap.colored_contact_list);
                     chDialogState=chDialogState + 1;
                 }
                 else if (chDialogState==6)
                 {
+                    chImage.setImageResource(R.mipmap.colored_contact_list);
                     chMainText.setText(R.string.perm_contacts_step_eight);
                     chDialogState=chDialogState + 1;
                 }
@@ -194,11 +194,11 @@ public class PermsContactsHelperDialog extends DialogFragment {
                 else if (chDialogState == 7)
                 {
                     chMainText.setText(R.string.perm_contacts_step_seven);
-                    chImage.setImageResource(R.mipmap.colored_contact_list);
                     chDialogState=chDialogState - 1;
                 }
                 else if (chDialogState == 8)
                 {
+                    chImage.setImageResource(R.mipmap.colored_contact_list);
                     chMainText.setText(R.string.perm_contacts_step_eight);
                     chDialogState=chDialogState - 1;
                 }

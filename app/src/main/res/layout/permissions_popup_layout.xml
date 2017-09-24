@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textSize="36sp"
+        android:textSize="28sp"
         android:text="@string/perm_perms_perm1"
         android:textStyle="bold"
         android:textColor="@color/colorRed"
@@ -34,12 +34,12 @@
         android:id="@+id/permspopupMainText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:text="@string/perm_bluetooth_info"
         android:layout_weight="5"
         android:layout_marginBottom="15sp"
-        android:layout_marginLeft="25sp"
-        android:layout_marginRight="25sp"
+        android:layout_marginLeft="50sp"
+        android:layout_marginRight="50sp"
         />
     
     <Button

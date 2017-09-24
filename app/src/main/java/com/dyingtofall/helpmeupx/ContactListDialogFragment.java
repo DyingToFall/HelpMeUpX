@@ -290,7 +290,7 @@ public class ContactListDialogFragment extends DialogFragment  {
                 ArrayList<String> currContInfo = new ArrayList<String>();
                 currContInfo = cLArrayList.get(i).getContactPhones();
 
-                view.setBackgroundColor(getResources().getColor(R.color.colorGreen));
+                //view.setBackgroundColor(getResources().getColor(R.color.colorGreen));
 
                 args.putInt("DialogPosition", i); //might not need this right now
                 args.putString("PhoneName", currContName);
